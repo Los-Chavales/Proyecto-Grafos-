@@ -1,4 +1,4 @@
-let driver = require("./../config/neo4j_connection");
+let driver = require("../config/neo4j_connection");
 const { v4: uuidv4 } = require('uuid');
 
 class Houses_Models {
@@ -8,16 +8,20 @@ class Houses_Models {
     let houses_nodes;
 
     try {
-      houses_nodes = await session.run('MATCH (h:House) RETURN h', {});
-      console.log("RESULT");
-      //console.log(houses_nodes);
-      console.log(houses_nodes.records[0].get(0).properties);
-      //return houses_nodes.records[0].get(0).properties;
-      return {
-        message: "Conexión lograda",
-        status: 200,
-        data: houses_nodes.records[0].get(0).properties
-      };
+      houses_nodes = await session.run('MATCH (h:house) RETURN h', {});
+      if(houses_nodes.records.length > 0){
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: houses_nodes.records[0].get(0).properties
+        };
+      }else{
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
     }
     catch (err) {
       console.error(err);
@@ -30,10 +34,6 @@ class Houses_Models {
   }
 
   async create_house(new_house){ //Crear una casa
-    new_house.id = uuidv4();
-    console.log("En el modelo")
-    console.log(new_house)
-
     //const query = `CREATE (n:Users {id:$id, name:$name, email: $email}) RETURN n`;
     const query = `CREATE(h:house { 
       id:$id,

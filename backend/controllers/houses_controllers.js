@@ -1,4 +1,4 @@
-const houses_model = require("../models/houses_model");
+const houses_model = require("../models/houses_models");
 
 class Houses_Controllers {
   async search_all_houses(req, res) { // GET
