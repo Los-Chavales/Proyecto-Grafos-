@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <div className='map'>
         <MapComponent places={[]} onMapClick={handleMapClick} markers={markers} />
       </div>
     </>
