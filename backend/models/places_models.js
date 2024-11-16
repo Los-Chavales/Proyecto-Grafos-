@@ -5,6 +5,92 @@ const { decodificar } = require('../auth/auth')
 
 class Places_Models {
 
+  async search_all_places() { // Ver todas las casas
+
+    let session = driver.session();
+    let places_nodes;
+
+    try {
+      places_nodes = await session.run('MATCH(p:place) RETURN p', {});
+      if(places_nodes.records.length > 0){
+
+        let places = [];
+
+        for (let i = 0; i < places_nodes.records.length ; i++) {
+          places.push(places_nodes.records[i].get(0).properties)
+        }
+
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: places
+        };
+      }else{
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+  }
+
+  async search_all_places_client(client) { // Ver los lugares de un usuario
+
+    let session = driver.session();
+    let places_nodes;
+
+    let decodedToken = decodificar(client.token)
+
+    const query = `MATCH(u:user {name:$name})-[d:destiny]-(p:place) RETURN p`;
+
+    const params = {
+      name: decodedToken.name,
+    }
+
+    try {
+
+      places_nodes = await session.run(query, params);
+
+      if(places_nodes.records.length > 0){
+
+        let houses = [];
+
+        for (let i = 0; i < places_nodes.records.length; i++) {
+          houses.push(places_nodes.records[i].get(0).properties)
+        }
+
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: houses
+        };
+      }else{
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+  }
+
   async create_place(new_place){ //Crear un lugar
     
     const query = `

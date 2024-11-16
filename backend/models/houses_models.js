@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { decodificar } = require('../auth/auth')
 
 class Houses_Models {
-  async search_all_houses() { // GET
+  async search_all_houses() { // Ver todas las casas
 
     let session = driver.session();
     let houses_nodes;
@@ -11,10 +11,65 @@ class Houses_Models {
     try {
       houses_nodes = await session.run('MATCH (h:house) RETURN h', {});
       if(houses_nodes.records.length > 0){
+
+        let houses = [];
+
+        for (let i = 0; i < houses_nodes.records.length; i++) {
+          houses.push(houses_nodes.records[i].get(0).properties)
+        }
+
         return {
           message: "Conexión lograda",
           status: 200,
-          data: houses_nodes.records[0].get(0).properties
+          data: houses
+        };
+      }else{
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+  }
+
+  async search_all_houses_owner(owner) { // Ver todas las casas de un propietario
+
+    let session = driver.session();
+    let houses_nodes;
+
+    let decodedToken = decodificar(owner.token)
+
+    const query = `MATCH(u:user {name:$name})-[o:owns]-(h:house) RETURN h`;
+
+    const params = {
+      name: decodedToken.name,
+    }
+
+    try {
+
+      houses_nodes = await session.run(query, params);
+
+      if(houses_nodes.records.length > 0){
+
+        let houses = [];
+
+        for (let i = 0; i < houses_nodes.records.length; i++) {
+          houses.push(houses_nodes.records[i].get(0).properties)
+        }
+
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: houses
         };
       }else{
         return {
