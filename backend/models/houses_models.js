@@ -1,5 +1,6 @@
 let driver = require("../config/neo4j_connection");
 const { v4: uuidv4 } = require('uuid');
+const { decodificar } = require('../auth/auth')
 
 class Houses_Models {
   async search_all_houses() { // GET
@@ -34,16 +35,27 @@ class Houses_Models {
   }
 
   async create_house(new_house){ //Crear una casa
-    //const query = `CREATE (n:Users {id:$id, name:$name, email: $email}) RETURN n`;
-    const query = `CREATE(h:house { 
+
+    //Decodificar el token para ver quién registro la casa
+
+    let decodedToken = decodificar(new_house.token)
+
+    const query = `
+    MATCH (u:user) 
+    WHERE u.name = $name   
+      
+    CREATE (u)-[o:owns]->(h:house { 
       id:$id,
       price:$price, 
       construction_materials:$construction_materials,
       size:$size,
       rooms:$rooms,
       property_type:$property_type
-    }) RETURN h`;
+    })  
+    RETURN u,o,h`;
+    
     const params = {
+      name: decodedToken.name,
       id: uuidv4(),
       price: new_house.price, 
       construction_materials: new_house.construction_materials,
@@ -51,8 +63,6 @@ class Houses_Models {
       rooms: new_house.rooms,
       property_type: new_house.property_type
     };
-    
-    //const resultObj = await driver.executeCypherQuery(query, params);
 
     let session = driver.session();
     let resultObj;
@@ -61,9 +71,7 @@ class Houses_Models {
       resultObj = await session.run(query, params);
 
       console.log("RESULT");
-      //console.log(resultObj);
       console.log(resultObj.records[0].get(0).properties);
-      //return resultObj.records[0].get(0).properties;
       return {
         message: "Conexión lograda",
         status: 200,
@@ -77,8 +85,9 @@ class Houses_Models {
         status: 500,
         data: err
       };
-    }
+    } 
   }
+
 }
 
 module.exports = new Houses_Models();
