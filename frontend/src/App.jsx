@@ -4,6 +4,7 @@ import './App.css'
 import MapComponent from './components/MapComponent';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import { AuthProvider } from './context/Auth_context'; 
 
 //Página 404
 
@@ -62,14 +63,16 @@ function App() {
 
   return (
     <>
-      <Header/>
-        <div className='contenido'>
-          <div className='map'>
-          <MapComponent places={places} onPlaceSelect={handlePlaceSelect} />
+      <AuthProvider> 
+        <Header/>
+          <div className='contenido'>
+            <div className='map'>
+            <MapComponent places={places} onPlaceSelect={handlePlaceSelect} />
+            </div>
           </div>
-        </div>
-      <Footer/>
-      <button onClick={savePlaceToBackend}>Guardar Lugar</button>
+        <Footer/>
+        <button onClick={savePlaceToBackend}>Guardar Lugar</button>
+      </AuthProvider>
     </>
   )
 }

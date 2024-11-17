@@ -168,6 +168,8 @@ class Users_Models {
 
     try {
 
+      if (!user.name || !user.password) return { message: "Datos incompletos", status: 400, data: "" };
+
       //Buscar al usuario por el nombre
       let userFound = await this.search_user(user)
 

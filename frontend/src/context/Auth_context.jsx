@@ -63,7 +63,8 @@ export const AuthProvider = ({ children }) => {
             if (RESPONSE.status != 200) {
                 return console.warn(RESPONSE.response.data);
             }
-            //console.log(RESPONSE.data);
+            console.log("AL menos llegamos al auth")
+            console.log(RESPONSE.data);
             setUser(RESPONSE.data)
             setIsAuth(true)
 

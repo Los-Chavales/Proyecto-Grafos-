@@ -68,3 +68,15 @@
   cursor: pointer;
   background-color: #dadada;
 }
+
+.p-input-user {
+  margin-top: -30px;
+  color: #A00000;
+}
+
+.p-error-user {
+  background-color: gainsboro;
+  padding: 10px;
+  color: #A00000;
+  border-radius: 20px;
+}
