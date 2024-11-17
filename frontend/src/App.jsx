@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { React, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css'
 import MapComponent from './components/MapComponent';
@@ -21,7 +21,39 @@ const NotFound = () => {
 
 function App() {
   const [places, setPlaces] = useState([]); // Lugares existentes
+  const [houses, setHouses] = useState([]); // Casas existentes
   const [selectedPlace, setSelectedPlace] = useState(null);
+
+  //Para obtener los lugares de la DB
+  const getData = async () => {
+    try {
+      const responseH = await fetch(import.meta.env.VITE_API_URL+'/houses', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const responseP = await fetch(import.meta.env.VITE_API_URL+'/places', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const infoH = await responseH.json();
+      const infoP = await responseP.json();
+      const getPlaces = infoP.data;
+      const getHouses = infoH.data;
+      console.debug(getHouses, getPlaces)
+      setPlaces(!Array.isArray(getPlaces) ? [] : getPlaces);
+      setHouses(!Array.isArray(getHouses) ? [] : getHouses);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  useEffect(() => {
+    getData()
+  }, [])
+  
 
   // Maneja la selección de un lugar en el mapa
   const handlePlaceSelect = (location) => {
@@ -33,7 +65,7 @@ function App() {
   const savePlaceToBackend = async () => {
     if (!selectedPlace) return alert('Por favor, selecciona un lugar primero.');
 
-    const response = await fetch('http://localhost:4000/places/create_place', {
+    const response = await fetch(import.meta.env.VITE_API_URL+'/places/create_place', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +75,7 @@ function App() {
         name_place: `lugar-${Date.now()}`, // Personaliza según tu flujo
         place_coords: [selectedPlace.lat,selectedPlace.lng],
         //type: 'place',
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZDlmOGE0LWJmNTktNGJlZi1iNjc0LTkxMTFlZWIzOWVjNCIsIm5hbWUiOiJ1c3VhcmlvX2NsaWVudGUiLCJyb2wiOiJjbGllbnRlIiwicGhvbmUiOiIwNDE0LTc3Nzc3NzgiLCJpYXQiOjE3MzE4MTI2MjcsImV4cCI6MTczMTgxNjIyN30.-xFvYLLoIGjvilo0yx4bFZvLF39gUNyf73IwMusMFhk",
+        token: import.meta.env.VITE_TOKEN_PLACE,
       }),
     });
 
@@ -52,9 +84,40 @@ function App() {
     console.debug(data);
     if (response.ok) {
       alert('Lugar guardado exitosamente');
-      setPlaces((prev) => [...prev, {
-        id: data.id, name: data.name_place, lat: data.place_coords[0], lng: data.place_coords[1], type: 'place',
-      }]); // Agrega al mapa
+      setPlaces((prev) => [...prev, data]); // Agrega al mapa
+    } else {
+      alert('Error al guardar el lugar');
+      console.error(data.error);
+    }
+  };
+
+  // Envía la casa seleccionada al backend para guardarlo como nodo
+  const saveHouseToBackend = async () => {
+    if (!selectedPlace) return alert('Por favor, selecciona un lugar primero.');
+
+    const response = await fetch(import.meta.env.VITE_API_URL+'/houses/create_house', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        price: 300,
+        construction_materials: "acero",
+        size: 270,
+        rooms: 2,
+        property_type: `casa-${Date.now()}`,
+        house_coords: [selectedPlace.lat,selectedPlace.lng],
+        token: import.meta.env.VITE_TOKEN_HOUSE,
+      }),
+    });
+
+    const info = await response.json();
+    const data = info.data;
+    console.debug(data);
+    if (response.ok) {
+      alert('Residencia guardada exitosamente');
+      //getData()
+      setHouses((prev) => [...prev, data]); // Agrega al mapa
     } else {
       alert('Error al guardar el lugar');
       console.error(data.error);
@@ -67,11 +130,12 @@ function App() {
         <Header/>
           <div className='contenido'>
             <div className='map'>
-            <MapComponent places={places} onPlaceSelect={handlePlaceSelect} />
+            <MapComponent houses={houses} places={places} onPlaceSelect={handlePlaceSelect} />
             </div>
           </div>
         <Footer/>
         <button onClick={savePlaceToBackend}>Guardar Lugar</button>
+        <button onClick={saveHouseToBackend}>Guardar Casa</button>
       </AuthProvider>
     </>
   )

@@ -17,6 +17,14 @@ class Users_Controllers {
     });
   } 
 
+  async register_user(req, res) { // crear un propietario
+    let result = await users_model.register_user(req.body)
+    return res.status(result.status).json({
+      message: result.message,
+      data: result.data
+    });
+  } 
+
   async login_user(req, res) { // proceso de login
     let result = await users_model.login_user(req.body)
 

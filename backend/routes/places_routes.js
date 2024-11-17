@@ -12,6 +12,6 @@ router.get("/", places_controllers.search_all_places);
 router.get("/see_your_places", checkLoginCliente, places_controllers.search_all_places_client);
 
 //Crear registros de los lugares
-router.post("/create_place", checkLoginCliente, places_controllers.create_place)
+router.post("/create_place", places_controllers.create_place)
 
 module.exports = router;

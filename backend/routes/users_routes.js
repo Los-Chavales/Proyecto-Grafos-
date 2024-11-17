@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 const users_controllers = require("../controllers/users_controllers")
 
+
+//Registrar cualquier usuario
+
+router.post("/register", users_controllers.register_user);
+
 //Registrar Usuario de tipo cliente
 
 router.post("/create_client", users_controllers.register_user_client);

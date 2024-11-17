@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const RESPONSE = await API_SERVER.post("/register", dataForm);
 
+            console.log(RESPONSE.data)
             //console.debug(RESPONSE);
 
             if (RESPONSE.status != 200) {
@@ -63,7 +64,6 @@ export const AuthProvider = ({ children }) => {
             if (RESPONSE.status != 200) {
                 return console.warn(RESPONSE.response.data);
             }
-            console.log("AL menos llegamos al auth")
             console.log(RESPONSE.data);
             setUser(RESPONSE.data)
             setIsAuth(true)

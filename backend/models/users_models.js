@@ -164,6 +164,62 @@ class Users_Models {
 
   } 
 
+  async register_user(new_user) { // Crear un propietario
+
+    let userFound = await this.search_user(new_user) //Verificar que no exista un usuario con el mismo nombre
+
+    if(userFound.status == 200){
+      return {
+        message: "Ya existe un usuario con ese nombre",
+        status: 500,
+        data: new_user
+      };
+    }
+
+    new_user.password = await bcrypt.hash(new_user.password, 10);
+
+    const query = `CREATE(u:user { 
+      id:$id,
+      name:$name,
+      password:$password,
+      user_rol:$user_rol,
+      phone:$phone
+    }) RETURN u`;
+
+    const params = {
+      id: uuidv4(),
+      name:new_user.name,
+      password:new_user.password,
+      user_rol:new_user.rol,
+      phone:new_user.phone
+    };
+
+    
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query, params);
+
+      console.log("RESULT");
+      console.log(resultObj.records[0].get(0).properties);
+      return {
+        message: "Conexión lograda",
+        status: 200,
+        data: resultObj.records[0].get(0).properties
+      };
+    }
+    catch (err) {
+      console.log(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+
+  } 
+
   async login_user(user) { // Crear un propietario
 
     try {
@@ -208,7 +264,7 @@ class Users_Models {
       return {
         message: "Contraseña correcta",
         status: 200,
-        data: user,
+        data: user.name,
         token: token
       }
 
