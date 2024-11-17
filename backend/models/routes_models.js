@@ -1,5 +1,23 @@
 let driver = require("../config/neo4j_connection");
 
+// Haversine formula para calcular la distancia
+const haversineDistance = (coords1, coords2) => {
+  const [lat1, lon1] = coords1;
+  const [lat2, lon2] = coords2;
+  const R = 6371; // Radio de la Tierra en km
+
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distancia en km
+};
+
+
 class Router_Models {
 
   async check_relationship(route){ //Verificar la relación
@@ -52,7 +70,11 @@ class Router_Models {
 
   async relate_house_and_place(new_route){ //Relacionar una casa con un lugar
 
-    let routeFound = await this.check_relationship(new_route) //Verificar que no exista un usuario con el mismo nombre
+    let routeFound = await this.check_relationship(new_route) //Verificar que no exista una relación ya registrada
+
+    const distance = haversineDistance(new_route.coords1, new_route.coords2);
+    console.log("SAco la distancia")
+    console.log(distance)
 
     if(routeFound.status == 200){
       return {
@@ -73,7 +95,7 @@ class Router_Models {
     const params = {
       id_house: new_route.id_house,
       id_place: new_route.id_place,
-      distance: new_route.distance,
+      distance: distance,
       unit: new_route.unit,
     };
 
