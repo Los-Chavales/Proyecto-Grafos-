@@ -6,26 +6,35 @@ function App() {
   const [places, setPlaces] = useState([]); // Lugares existentes
   const [houses, setHouses] = useState([]); // Casas existentes
   const [selectedPlace, setSelectedPlace] = useState(null);
-  
+
   //Para obtener los lugares de la DB
-  useEffect(() => {
-    async() => {
-      const getHouses = await fetch('http://localhost:4000/houses', {
+  const getData = async () => {
+    try {
+      const responseH = await fetch(import.meta.env.VITE_API_URL+'/houses', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-      }).then(response => response.json()).then(data => {return data.data});
-      const getPlaces = await fetch('http://localhost:4000/places', {
+      })
+      const responseP = await fetch(import.meta.env.VITE_API_URL+'/places', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-      }).then(response => response.json()).then(data => {return data.data});
+      })
+      const infoH = await responseH.json();
+      const infoP = await responseP.json();
+      const getPlaces = infoP.data;
+      const getHouses = infoH.data;
       console.debug(getHouses, getPlaces)
-      setPlaces(getPlaces);
-      setHouses(getHouses);
+      setPlaces(!Array.isArray(getPlaces) ? [] : getPlaces);
+      setHouses(!Array.isArray(getHouses) ? [] : getHouses);
+    } catch (error) {
+      console.error(error)
     }
+  }
+  useEffect(() => {
+    getData()
   }, [])
   
 
@@ -39,7 +48,7 @@ function App() {
   const savePlaceToBackend = async () => {
     if (!selectedPlace) return alert('Por favor, selecciona un lugar primero.');
 
-    const response = await fetch('http://localhost:4000/places/create_place', {
+    const response = await fetch(import.meta.env.VITE_API_URL+'/places/create_place', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +58,7 @@ function App() {
         name_place: `lugar-${Date.now()}`, // Personaliza según tu flujo
         place_coords: [selectedPlace.lat,selectedPlace.lng],
         //type: 'place',
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZDlmOGE0LWJmNTktNGJlZi1iNjc0LTkxMTFlZWIzOWVjNCIsIm5hbWUiOiJ1c3VhcmlvX2NsaWVudGUiLCJyb2wiOiJjbGllbnRlIiwicGhvbmUiOiIwNDE0LTc3Nzc3NzgiLCJpYXQiOjE3MzE4MjI4NjAsImV4cCI6MTczMTgyNjQ2MH0.Smyk2ims74JzUU5AsiBARAVqOjjxDMxgIz_bBlOrihA",
+        token: import.meta.env.VITE_TOKEN_PLACE,
       }),
     });
 
@@ -69,7 +78,7 @@ function App() {
   const saveHouseToBackend = async () => {
     if (!selectedPlace) return alert('Por favor, selecciona un lugar primero.');
 
-    const response = await fetch('http://localhost:4000/houses/create_house', {
+    const response = await fetch(import.meta.env.VITE_API_URL+'/houses/create_house', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -81,7 +90,7 @@ function App() {
         rooms: 2,
         property_type: `casa-${Date.now()}`,
         house_coords: [selectedPlace.lat,selectedPlace.lng],
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAwZTc3ZmU1LWY0MjgtNDFhNi1iNGFjLTkxMmNlYmFkNTMyZSIsIm5hbWUiOiJ1c3VhcmlvX3Byb3BpZXRhcmlvIiwicm9sIjoicHJvcGlldGFyaW8iLCJwaG9uZSI6IjA0MTQtNzc3Nzc4OCIsImlhdCI6MTczMTgyMzA0MCwiZXhwIjoxNzMxODI2NjQwfQ.W9SvLn6ZlGOshq_nr-wlEopXoqWWmyKNST46C2nqnLM",
+        token: import.meta.env.VITE_TOKEN_HOUSE,
       }),
     });
 
@@ -90,6 +99,7 @@ function App() {
     console.debug(data);
     if (response.ok) {
       alert('Residencia guardada exitosamente');
+      //getData()
       setHouses((prev) => [...prev, data]); // Agrega al mapa
     } else {
       alert('Error al guardar el lugar');
