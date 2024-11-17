@@ -106,8 +106,7 @@ class Houses_Models {
       size:$size,
       rooms:$rooms,
       property_type:$property_type,
-      house_lat: $house_lat,
-      house_lon: $house_lon
+      house_coords: $house_coords
     })  
     RETURN u,o,h`;
     
@@ -120,8 +119,7 @@ class Houses_Models {
       rooms: new_house.rooms,
       property_type: new_house.property_type,
 
-      house_lat: new_house.coords1,
-      house_lon: new_house.coords2
+      house_coords: new_house.house_coords,
       
     };
 
