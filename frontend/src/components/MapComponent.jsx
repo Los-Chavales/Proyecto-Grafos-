@@ -16,7 +16,7 @@ const placeIcon = new L.Icon({
   iconSize: [25, 25],
 });
 
-const MapComponent = ({ houses, places, onPlaceSelect }) => {
+const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
   const [selectedPosition, setSelectedPosition] = useState(null);
 
   // Componente para capturar clics en el mapa
@@ -49,17 +49,29 @@ const MapComponent = ({ houses, places, onPlaceSelect }) => {
 
       {/* Marcadores de casas */}
       {houses.map((house, idx) => (
-        <Marker key={idx} position={[house.lat, house.lng]} icon={houseIcon}>
-          <Popup>{house.name}</Popup>
+        <Marker key={idx} position={house.house_coords} icon={houseIcon}>
+          <Popup>{house.property_type}</Popup>
         </Marker>
       ))}
 
       {/* Marcadores de lugares */}
       {places.map((place, idx) => (
-        <Marker key={idx} position={[place.lat, place.lng]} icon={placeIcon}>
-          <Popup>{place.name}</Popup>
+        <Marker key={idx} position={place.place_coords} icon={placeIcon}>
+          <Popup>{place.name_place}</Popup>
         </Marker>
       ))}
+
+      {/* Líneas para distancias */}
+      {/*distances.map((dist, idx) => (
+        <Polyline
+          key={idx}
+          positions={[
+            [dist.house.lat, dist.house.lng],
+            [dist.place.lat, dist.place.lng],
+          ]}
+          color="blue"
+        />
+      ))*/}
 
       {/* Clic en el mapa para agregar nodos */}
       <LocationMarker onPlaceSelect={onPlaceSelect} />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import MapComponent from './components/MapComponent';
 
@@ -6,6 +6,28 @@ function App() {
   const [places, setPlaces] = useState([]); // Lugares existentes
   const [houses, setHouses] = useState([]); // Casas existentes
   const [selectedPlace, setSelectedPlace] = useState(null);
+  
+  //Para obtener los lugares de la DB
+  useEffect(() => {
+    async() => {
+      const getHouses = await fetch('http://localhost:4000/houses', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(response => response.json()).then(data => {return data.data});
+      const getPlaces = await fetch('http://localhost:4000/places', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(response => response.json()).then(data => {return data.data});
+      console.debug(getHouses, getPlaces)
+      setPlaces(getPlaces);
+      setHouses(getHouses);
+    }
+  }, [])
+  
 
   // Maneja la selección de un lugar en el mapa
   const handlePlaceSelect = (location) => {
@@ -36,9 +58,7 @@ function App() {
     console.debug(data);
     if (response.ok) {
       alert('Lugar guardado exitosamente');
-      setPlaces((prev) => [...prev, {
-        id: data.id, name: data.name_place, lat: data.place_coords[0], lng: data.place_coords[1], type: 'place',
-      }]); // Agrega al mapa
+      setPlaces((prev) => [...prev, data]); // Agrega al mapa
     } else {
       alert('Error al guardar el lugar');
       console.error(data.error);
@@ -70,9 +90,7 @@ function App() {
     console.debug(data);
     if (response.ok) {
       alert('Residencia guardada exitosamente');
-      setHouses((prev) => [...prev, {
-        id: data.id, name: data.property_type, lat: data.house_coords[0], lng: data.house_coords[1], type: 'house',
-      }]); // Agrega al mapa
+      setHouses((prev) => [...prev, data]); // Agrega al mapa
     } else {
       alert('Error al guardar el lugar');
       console.error(data.error);
