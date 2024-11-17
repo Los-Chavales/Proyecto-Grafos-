@@ -105,7 +105,9 @@ class Houses_Models {
       construction_materials:$construction_materials,
       size:$size,
       rooms:$rooms,
-      property_type:$property_type
+      property_type:$property_type,
+      house_lat: $house_lat,
+      house_lon: $house_lon
     })  
     RETURN u,o,h`;
     
@@ -116,7 +118,11 @@ class Houses_Models {
       construction_materials: new_house.construction_materials,
       size: new_house.size,
       rooms: new_house.rooms,
-      property_type: new_house.property_type
+      property_type: new_house.property_type,
+
+      house_lat: new_house.coords1,
+      house_lon: new_house.coords2
+      
     };
 
     let session = driver.session();
