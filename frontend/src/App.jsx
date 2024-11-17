@@ -23,17 +23,21 @@ function App() {
       },
       body: JSON.stringify({
         //id: `place-${Date.now()}`, // ID único
-        name_place: 'Nuevo Lugar de Moisés', // Personaliza según tu flujo
+        name_place: `lugar-${Date.now()}`, // Personaliza según tu flujo
         place_coords: [selectedPlace.lat,selectedPlace.lng],
         //type: 'place',
         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZDlmOGE0LWJmNTktNGJlZi1iNjc0LTkxMTFlZWIzOWVjNCIsIm5hbWUiOiJ1c3VhcmlvX2NsaWVudGUiLCJyb2wiOiJjbGllbnRlIiwicGhvbmUiOiIwNDE0LTc3Nzc3NzgiLCJpYXQiOjE3MzE4MTI2MjcsImV4cCI6MTczMTgxNjIyN30.-xFvYLLoIGjvilo0yx4bFZvLF39gUNyf73IwMusMFhk",
       }),
     });
 
-    const data = await response.json();
+    const info = await response.json();
+    const data = info.data;
+    console.debug(data);
     if (response.ok) {
       alert('Lugar guardado exitosamente');
-      setPlaces((prev) => [...prev, data.location]); // Agrega al mapa
+      setPlaces((prev) => [...prev, {
+        id: data.id, name: data.name_place, lat: data.place_coords[0], lng: data.place_coords[1], type: 'place',
+      }]); // Agrega al mapa
     } else {
       alert('Error al guardar el lugar');
       console.error(data.error);

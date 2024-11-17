@@ -102,7 +102,7 @@ class Places_Models {
       name_place:$name_place,
       place_coords: $place_coords
     })  
-    RETURN u,d,p`;
+    RETURN p`;//quité: u,d
 
     //Decodificar el token para saber quién lo esta registrando
 
