@@ -99,7 +99,9 @@ class Places_Models {
       
     CREATE (u)-[d:destiny]->(p:place { 
       id:$id,
-      name_place:$name_place
+      name_place:$name_place,
+      place_lat: $place_lat,
+      place_lon: $place_lon
     })  
     RETURN u,d,p`;
 
@@ -111,6 +113,9 @@ class Places_Models {
       name: decodedToken.name,
       id: uuidv4(),
       name_place: new_place.name_place,
+
+      place_lat: new_place.coords1,
+      place_lon: new_place.coords2
     }
 
     let session = driver.session();
