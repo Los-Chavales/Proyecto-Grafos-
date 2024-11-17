@@ -4,6 +4,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import MapComponent from './components/MapComponent';
+import Footer from './components/Footer';
+import Header from './components/Header';
 
 //Página 404
 
@@ -29,9 +31,15 @@ function App() {
 
   return (
     <>
-      <div className='map'>
-        <MapComponent places={[]} onMapClick={handleMapClick} markers={markers} />
-      </div>
+    <Router>
+      <Header/>
+        <div className='contenido'>
+          <div className='map'>
+          <MapComponent places={[]} onMapClick={handleMapClick} markers={markers} />
+          </div>
+        </div>
+      <Footer/>
+    </Router> 
     </>
   )
 }

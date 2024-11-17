@@ -1,3 +1,28 @@
+*{
+    margin: 0;
+    padding: 0;
+  }
+  
+main {
+    display: flex;
+    place-items: center;
+    flex-direction: column;
+}
+  
+.contenido{
+    /*background-image: url(../assets/imgs/fondo2.jpg);*/
+    background-position-x: -100px;
+    background-size: 110vh;
+    background-repeat:repeat;
+    overflow:hidden;
+    box-sizing: content-box;
+    position: relative;
+    min-height: 100vh;
+}
+  
+body{
+    height: 100vh;
+}
 .map {
     max-height: 80vh;
     width: 95vw;
