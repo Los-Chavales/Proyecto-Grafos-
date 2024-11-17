@@ -4,6 +4,7 @@ import MapComponent from './components/MapComponent';
 
 function App() {
   const [places, setPlaces] = useState([]); // Lugares existentes
+  const [houses, setHouses] = useState([]); // Casas existentes
   const [selectedPlace, setSelectedPlace] = useState(null);
 
   // Maneja la selección de un lugar en el mapa
@@ -26,7 +27,7 @@ function App() {
         name_place: `lugar-${Date.now()}`, // Personaliza según tu flujo
         place_coords: [selectedPlace.lat,selectedPlace.lng],
         //type: 'place',
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZDlmOGE0LWJmNTktNGJlZi1iNjc0LTkxMTFlZWIzOWVjNCIsIm5hbWUiOiJ1c3VhcmlvX2NsaWVudGUiLCJyb2wiOiJjbGllbnRlIiwicGhvbmUiOiIwNDE0LTc3Nzc3NzgiLCJpYXQiOjE3MzE4MTI2MjcsImV4cCI6MTczMTgxNjIyN30.-xFvYLLoIGjvilo0yx4bFZvLF39gUNyf73IwMusMFhk",
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZDlmOGE0LWJmNTktNGJlZi1iNjc0LTkxMTFlZWIzOWVjNCIsIm5hbWUiOiJ1c3VhcmlvX2NsaWVudGUiLCJyb2wiOiJjbGllbnRlIiwicGhvbmUiOiIwNDE0LTc3Nzc3NzgiLCJpYXQiOjE3MzE4MjI4NjAsImV4cCI6MTczMTgyNjQ2MH0.Smyk2ims74JzUU5AsiBARAVqOjjxDMxgIz_bBlOrihA",
       }),
     });
 
@@ -47,7 +48,7 @@ function App() {
   return (
     <>
       <div className='map'>
-        <MapComponent places={places} onPlaceSelect={handlePlaceSelect} />
+        <MapComponent houses={houses} places={places} onPlaceSelect={handlePlaceSelect} />
       </div>
       <button onClick={savePlaceToBackend}>Guardar Lugar</button>
     </>
