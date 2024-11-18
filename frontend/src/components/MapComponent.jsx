@@ -1,83 +1,83 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+'use client'
 
-import L from 'leaflet';
-import houseIconUrl from '../assets/house-icon.png'; // Asegúrate de tener estos íconos
-import placeIconUrl from '../assets/place-icon.png';
+import { useEffect, useState } from 'react'
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import { Button } from "./ui/button"
+/*import icon1 from '../assets/place-icon.png'
+import icon2 from '../assets/logo1.png'
+import icon3 from '../assets/house-icon.png'*
 
-const houseIcon = new L.Icon({
-  iconUrl: houseIconUrl,
-  iconSize: [25, 25],
-});
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: icon3,
+  iconUrl: icon2,
+  shadowUrl: icon1,
+});*/
 
-const placeIcon = new L.Icon({
-  iconUrl: placeIconUrl,
-  iconSize: [25, 25],
-});
+const RoutingMachine = ({ start, end, onRouteFound }) => {
+  const map = useMap()
+  const [routeCoordinates, setRouteCoordinates] = useState([])
 
-const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
-  const [selectedPosition, setSelectedPosition] = useState(null);
+  useEffect(() => {
+    const fetchRoute = async () => {
+      if (start && end) {
+        try {
+          const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson`)
+          const data = await response.json()
+          
+          if (data.routes && data.routes.length > 0) {
+            const coordinates = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]])
+            setRouteCoordinates(coordinates)
+            
+            const distance = data.routes[0].distance / 1000 // Convert to km
+            onRouteFound(distance)
+            
+            // Fit the map to the route
+            const bounds = L.latLngBounds(coordinates)
+            map.fitBounds(bounds, { padding: [50, 50] })
+          }
+        } catch (error) {
+          console.error("Error fetching route:", error)
+        }
+      }
+    }
 
-  // Componente para capturar clics en el mapa
-  const LocationMarker = () => {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        setSelectedPosition([lat, lng]);
-        onPlaceSelect({ lat, lng }); // Notifica al componente padre
-      },
-    });
+    fetchRoute()
+  }, [map, start, end, onRouteFound])
 
-    return selectedPosition ? (
-      <Marker position={selectedPosition}>
-        <Popup>Coordenadas seleccionadas: {selectedPosition.join(', ')}</Popup>
-      </Marker>
-    ) : null;
-  };
+  return <Polyline positions={routeCoordinates} color="#6366F1" weight={6} />
+}
 
+export default function MapComponent({ 
+  locations, 
+  routeStart, 
+  routeEnd, 
+  onSetRoute,
+  onRouteFound
+}) {
   return (
-    <MapContainer
-      center={[9.3022, -70.5920]} // Coordenadas iniciales
-      zoom={13}
-      style={{ height: '90vh', width: '100%' }}
+    <MapContainer 
+      center={[9.3343, -70.5853]} 
+      zoom={12} 
+      style={{ height: '400px', width: '100%' }}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
-
-      {/* Marcadores de casas */}
-      {houses.map((house, idx) => (
-        <Marker key={idx} position={house.house_coords} icon={houseIcon}>
-          <Popup>{house.property_type}</Popup>
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {locations.map((location) => (
+        <Marker key={location.id} position={[location.lat, location.lng]}>
+          <Popup>
+            <div>
+              <h3>{location.name} ({location.type})</h3>
+              <Button onClick={() => onSetRoute(location, true)}>Establecer como inicio</Button>
+              <Button onClick={() => onSetRoute(location, false)}>Establecer como destino</Button>
+            </div>
+          </Popup>
         </Marker>
       ))}
-
-      {/* Marcadores de lugares */}
-      {places.map((place, idx) => (
-        <Marker key={idx} position={place.place_coords} icon={placeIcon}>
-          <Popup>{place.name_place}</Popup>
-        </Marker>
-      ))}
-
-      {/* Líneas para distancias */}
-      {/*distances.map((dist, idx) => (
-        <Polyline
-          key={idx}
-          positions={[
-            [dist.house.lat, dist.house.lng],
-            [dist.place.lat, dist.place.lng],
-          ]}
-          color="blue"
-        />
-      ))*/}
-
-      {/* Clic en el mapa para agregar nodos */}
-      <LocationMarker onPlaceSelect={onPlaceSelect} />
-
+      {routeStart && routeEnd && (
+        <RoutingMachine start={routeStart} end={routeEnd} onRouteFound={onRouteFound} />
+      )}
     </MapContainer>
-  );
-};
-
-export default MapComponent;
+  )
+}
