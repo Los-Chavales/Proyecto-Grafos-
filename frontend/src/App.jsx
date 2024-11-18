@@ -4,7 +4,8 @@ import './App.css'
 import MapComponent from './components/MapComponent';
 import Footer from './components/Footer';
 import Header from './components/Header';
-import { AuthProvider } from './context/Auth_context'; 
+import { AuthProvider } from './context/Auth_context';
+import Google from './ResidenciaFinderGoogleMaps.tsx'
 
 //Página 404
 
@@ -27,13 +28,13 @@ function App() {
   //Para obtener los lugares de la DB
   const getData = async () => {
     try {
-      const responseH = await fetch(import.meta.env.VITE_API_URL+'/houses', {
+      const responseH = await fetch(import.meta.env.VITE_API_URL + '/houses', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       })
-      const responseP = await fetch(import.meta.env.VITE_API_URL+'/places', {
+      const responseP = await fetch(import.meta.env.VITE_API_URL + '/places', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ function App() {
   useEffect(() => {
     getData()
   }, [])
-  
+
 
   // Maneja la selección de un lugar en el mapa
   const handlePlaceSelect = (location) => {
@@ -65,7 +66,7 @@ function App() {
   const savePlaceToBackend = async () => {
     if (!selectedPlace) return alert('Por favor, selecciona un lugar primero.');
 
-    const response = await fetch(import.meta.env.VITE_API_URL+'/places/create_place', {
+    const response = await fetch(import.meta.env.VITE_API_URL + '/places/create_place', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ function App() {
       body: JSON.stringify({
         //id: `place-${Date.now()}`, // ID único
         name_place: `lugar-${Date.now()}`, // Personaliza según tu flujo
-        place_coords: [selectedPlace.lat,selectedPlace.lng],
+        place_coords: [selectedPlace.lat, selectedPlace.lng],
         //type: 'place',
         token: import.meta.env.VITE_TOKEN_PLACE,
       }),
@@ -95,7 +96,7 @@ function App() {
   const saveHouseToBackend = async () => {
     if (!selectedPlace) return alert('Por favor, selecciona un lugar primero.');
 
-    const response = await fetch(import.meta.env.VITE_API_URL+'/houses/create_house', {
+    const response = await fetch(import.meta.env.VITE_API_URL + '/houses/create_house', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -106,7 +107,7 @@ function App() {
         size: 270,
         rooms: 2,
         property_type: `casa-${Date.now()}`,
-        house_coords: [selectedPlace.lat,selectedPlace.lng],
+        house_coords: [selectedPlace.lat, selectedPlace.lng],
         token: import.meta.env.VITE_TOKEN_HOUSE,
       }),
     });
@@ -126,18 +127,37 @@ function App() {
 
   return (
     <>
-      <AuthProvider> 
-        <Header/>
-          <div className='contenido'>
-            <div className='map'>
-            <MapComponent houses={houses} places={places} onPlaceSelect={handlePlaceSelect} />
+      <AuthProvider>
+        
+          <Router>
+            <Header />
+            <div className='contenido'>
+              <Routes>
+                <Route path="/" element={
+                  <>
+                    <div className='contenido'>
+                      <div className='map'>
+                        <MapComponent houses={houses} places={places} onPlaceSelect={handlePlaceSelect} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <button onClick={savePlaceToBackend}>Guardar Lugar</button>
+                      <button onClick={saveHouseToBackend}>Guardar Casa</button>
+                    </div>
+                  </>
+                } />
+                <Route path="/google" element={<Google />} />
+              </Routes>
             </div>
-          </div>
-        <Footer/>
-        <button onClick={savePlaceToBackend}>Guardar Lugar</button>
-        <button onClick={saveHouseToBackend}>Guardar Casa</button>
+            <Footer />
+          </Router>
+        
+
+        <Footer />
       </AuthProvider>
     </>
+
   )
 }
 
