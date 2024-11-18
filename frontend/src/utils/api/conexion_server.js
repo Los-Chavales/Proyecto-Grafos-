@@ -18,3 +18,19 @@ export const API_SERVER = axios.create({
   withCredentials: true,
   timeout: 60000,
 });
+
+// Conectar a lugares
+export const API_SERVER_PLACES = axios.create({
+  baseURL: URL_BASE + '/places',
+  headers: HEADER,
+  withCredentials: true,
+  timeout: 60000,
+});
+
+// Conectar a lugares
+export const API_SERVER_HOUSES = axios.create({
+  baseURL: URL_BASE + '/houses',
+  headers: HEADER,
+  withCredentials: true,
+  timeout: 60000,
+});

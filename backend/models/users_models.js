@@ -4,9 +4,29 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 const jwt = require("jsonwebtoken");
-
+const { decodificar } = require('../auth/auth')
 
 class Users_Models {
+  async decoded_token(token) { // Buscar un usuario
+      let decodedToken = decodificar(token);
+      if (!decodedToken) return {
+        message: "Error de la petición",
+        status: 500,
+        data: ""
+      };
+
+      return {
+        message: "Conexión lograda",
+        status: 200,
+        data: {
+          id: decodedToken.id,
+          name: decodedToken.name,
+          rol: decodedToken.rol,
+          phone: decodedToken.phone
+        }
+      };
+
+  } 
   async search_user(user) { // Buscar un usuario
 
     if (!user.name || !user.password) return { message: "Datos incompletos", status: 400, data: "" };

@@ -4,7 +4,7 @@ import { useAuth } from "../context/Auth_context";
 import "../styles/login.css";
 
 const Register = ({ isOpen, closeModal }) => {
-  const { register, handleSubmit, formState: { errors }, } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const { signup, user, isAuth, errorsServer } = useAuth();
 
   const onSubmit = (data) => signup(data);

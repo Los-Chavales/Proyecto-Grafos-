@@ -93,7 +93,7 @@ class Houses_Models {
 
     //Decodificar el token para ver quién registro la casa
 
-    let decodedToken = decodificar(new_house.token)
+    //let decodedToken = decodificar(new_house.token)
 
     const query = `
     MATCH (u:user) 
@@ -111,7 +111,7 @@ class Houses_Models {
     RETURN h`;
     
     const params = {
-      name: decodedToken.name,
+      name: new_house.name,
       id: uuidv4(),
       price: new_house.price, 
       construction_materials: new_house.construction_materials,

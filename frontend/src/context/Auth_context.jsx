@@ -12,6 +12,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [userDecoded, setUserDecoded] = useState(null);
     const [isAuth, setIsAuth] = useState(false);
     const [mensage, setMensage] = useState(false);
     const [errorsServer, setErrorsServer] = useState([]);
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
                 return console.log(RESPONSE.response.data);
             }
 
-            //console.log(RESPONSE.data);
+            console.log(RESPONSE.data);
             setUser(RESPONSE.data)
             setIsAuth(true)
 
@@ -64,7 +65,11 @@ export const AuthProvider = ({ children }) => {
             if (RESPONSE.status != 200) {
                 return console.warn(RESPONSE.response.data);
             }
-            console.log(RESPONSE.data);
+          /*   console.log(RESPONSE.data);
+
+            console.log(RESPONSE.data.token) */
+            verifyToken(RESPONSE.data)
+
             setUser(RESPONSE.data)
             setIsAuth(true)
 
@@ -86,50 +91,36 @@ export const AuthProvider = ({ children }) => {
         setIsAuth(false);
     };
 
-    //Para validar la cookie del token
-    useEffect(() => {
-        const checkLogin = async () => {
-            const cookies = Cookies.get();
-            //console.log(cookies);
-            //console.log(cookies.token);
-            if (!cookies.token) {
-                setIsAuth(false);
-                setUser(null);
-                setLoading(false);
-                return;
+    //Para validar el token
+    async function verifyToken(dataForm) {
+    
+        console.log(dataForm)
+        try {
+            const RESPONSE = await API_SERVER.post("/decoded_token", dataForm);
+            if (RESPONSE.status != 200) {
+                return console.warn(RESPONSE.response.data);
             }
 
-            try {
-                const RESPONSE = await API_SERVER.get("/verify", cookies.token);
-                if (RESPONSE.status != 200 || !RESPONSE.data) {
-                    console.warn(RESPONSE.response.data);
-                    setIsAuth(false);
-                    return setLoading(false);
-                }
-                //console.log(RESPONSE.data);
-                setUser(RESPONSE.data)
-                setIsAuth(true)
-                setLoading(false);
-            } catch (error) {
-                let menError = error.message;
-                if (error.response && error.response.data && error.response.data.message) menError = error.response.data.message;
-                if (!menError) menError = "Error";
-                console.error('Error al validar token:', menError);
-                logout();
-                //setIsAuth(false);
-                setLoading(false);
-                return;
-            }
+       /*      console.log("al menos decodifica eso?")
+            console.log(RESPONSE.data); */
+            setUserDecoded(RESPONSE.data)
 
+        } catch (error) {
+            let menError = error.message;
+            if (error.response && error.response.data && error.response.data.message) menError = error.response.data.message;
+            if (!menError) menError = "Error";
+            console.error('Error al iniciar sesión:', menError);
+            setErrorsServer([menError]);
+            return error;
         }
-        checkLogin();
-    }, []);
+    }
 
 
     return (
         <AuthContext.Provider
             value={{
                 user,
+                userDecoded,
                 signup,
                 signin,
                 logout,

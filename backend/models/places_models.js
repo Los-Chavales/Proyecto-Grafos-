@@ -106,10 +106,10 @@ class Places_Models {
 
     //Decodificar el token para saber quién lo esta registrando
 
-    let decodedToken = decodificar(new_place.token)
+    //let decodedToken = decodificar(new_place.token)
 
     const params = {
-      name: decodedToken.name,
+      name: new_place.name,
       id: uuidv4(),
       name_place: new_place.name_place,
 

@@ -1,0 +1,8 @@
+.container_submit_button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.submit_button{
+  margin-top: 5px;
+}
