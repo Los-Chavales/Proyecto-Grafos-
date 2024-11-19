@@ -93,6 +93,8 @@ class Places_Models {
 
   async create_place(new_place) { //Crear un lugar
 
+    let decodedToken = decodificar(new_place.name)
+
     const query = `
     MATCH (u:user) 
     WHERE u.name = $name   
@@ -105,7 +107,8 @@ class Places_Models {
     RETURN p`;
 
     const params = {
-      name: new_place.name,
+  /*     name: new_place.name, */
+      name: decodedToken.name,
       id: uuidv4(),
       name_place: new_place.name_place,
 
