@@ -19,4 +19,4 @@ La búsqueda de una vivienda adecuada es una decisión compleja y depende de div
 
 Universidad Valle del Momboy
 
-Prof. Yackeline González
+Matemática Combinatoria - Prof. Yackeline González
