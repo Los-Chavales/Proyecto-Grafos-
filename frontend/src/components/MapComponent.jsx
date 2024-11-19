@@ -23,70 +23,103 @@ const MapEventHandler = ({ onMapClick }) => {
   return null;
 };
 
-const MapComponent = ({ houses, places, routes, onAddHouse, onAddPlace, fetchAndDisplayRoutes }) => {
+const MapComponent = ({
+  houses,
+  places,
+  routes,
+  onAddHouse,
+  onAddPlace,
+  fetchAndDisplayRoutes,
+  selectedHouse,
+  setSelectedHouse,
+}) => {
   const [tempMarker, setTempMarker] = useState(null);
+  const [tempName, setTempName] = useState('');
 
   const handleAddLocation = (type) => {
     if (type === 'house') {
-      onAddHouse(tempMarker); // Guarda la casa
+      onAddHouse({ ...tempMarker, name: tempName });
     } else if (type === 'place') {
-      onAddPlace(tempMarker); // Guarda el lugar
+      onAddPlace({ ...tempMarker, name: tempName });
     }
     setTempMarker(null);
+    setTempName('');
   };
 
   useEffect(() => {
-    if (houses.length > 0 && places.length > 0) {
-      // Calcula rutas automáticamente cuando hay casas y lugares
-      fetchAndDisplayRoutes(houses, places);
+    if (selectedHouse && places.length > 0) {
+      // Calcula rutas automáticamente cuando una casa está seleccionada
+      fetchAndDisplayRoutes([selectedHouse], places);
     }
-  }, [houses, places, fetchAndDisplayRoutes]);
+  }, [selectedHouse, places, fetchAndDisplayRoutes]);
 
   return (
-    <MapContainer center={[10.0, -69.3]} zoom={13} style={{ height: '500px', width: '100%' }}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
+    <div>
+      <select
+        value={selectedHouse ? selectedHouse.name : ''}
+        onChange={(e) =>
+          setSelectedHouse(houses.find((house) => house.name === e.target.value) || null)
+        }
+      >
+        <option value="">Selecciona una casa</option>
+        {houses.map((house, idx) => (
+          <option key={idx} value={house.name}>
+            {house.name}
+          </option>
+        ))}
+      </select>
 
-      {/* Manejo de eventos del mapa */}
-      <MapEventHandler
-        onMapClick={(latlng) => {
-          setTempMarker(latlng); // Marca temporalmente la posición clickeada
-        }}
-      />
+      <MapContainer center={[10.0, -69.3]} zoom={13} style={{ height: '500px', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+        />
 
-      {/* Marcador temporal */}
-      {tempMarker && (
-        <Marker position={tempMarker}>
-          <Popup>
-            <button onClick={() => handleAddLocation('house')}>Guardar como Casa</button>
-            <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>
-          </Popup>
-        </Marker>
-      )}
+        {/* Manejo de eventos del mapa */}
+        <MapEventHandler
+          onMapClick={(latlng) => {
+            setTempMarker(latlng); // Marca temporalmente la posición clickeada
+          }}
+        />
 
-      {/* Marcadores de casas */}
-      {houses.map((house, idx) => (
-        <Marker key={idx} position={[house.lat, house.lng]} icon={houseIcon}>
-          <Popup>Casa {idx + 1}</Popup>
-        </Marker>
-      ))}
+        {/* Marcador temporal */}
+        {tempMarker && (
+          <Marker position={tempMarker}>
+            <Popup>
+              <input
+                type="text"
+                placeholder="Nombre"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+              />
+              <button onClick={() => handleAddLocation('house')}>Guardar como Casa</button>
+              <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>
+            </Popup>
+          </Marker>
+        )}
 
-      {/* Marcadores de lugares */}
-      {places.map((place, idx) => (
-        <Marker key={idx} position={[place.lat, place.lng]} icon={placeIcon}>
-          <Popup>Lugar {idx + 1}</Popup>
-        </Marker>
-      ))}
+        {/* Marcadores de casas */}
+        {houses.map((house, idx) => (
+          <Marker key={idx} position={[house.lat, house.lng]} icon={houseIcon}>
+            <Popup>{house.name}</Popup>
+          </Marker>
+        ))}
 
-      {/* Líneas de las rutas */}
-      {routes.map((route, idx) => (
-        <Polyline key={idx} positions={route.geometry} color="blue">
-          <Popup>Distancia: {route.distance.toFixed(2)} km</Popup>
-        </Polyline>
-      ))}
-    </MapContainer>
+        {/* Marcadores de lugares */}
+        {places.map((place, idx) => (
+          <Marker key={idx} position={[place.lat, place.lng]} icon={placeIcon}>
+            <Popup>{place.name}</Popup>
+          </Marker>
+        ))}
+
+        {/* Líneas de las rutas */}
+        {routes.map((route, idx) => (
+          <Polyline key={idx} positions={route.geometry} color="blue">
+            <Popup>Distancia: {route.distance.toFixed(2)} km</Popup>
+          </Polyline>
+        ))}
+      </MapContainer>
+    </div>
   );
 };
 

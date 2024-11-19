@@ -6,15 +6,14 @@ const App = () => {
   const [houses, setHouses] = useState([]);
   const [places, setPlaces] = useState([]);
   const [routes, setRoutes] = useState([]);
+  const [selectedHouse, setSelectedHouse] = useState(null);
 
-  const addHouse = (coords) => {
-    const newHouse = { lat: coords.lat, lng: coords.lng };
-    setHouses([...houses, newHouse]);
+  const addHouse = (house) => {
+    setHouses([...houses, house]);
   };
 
-  const addPlace = (coords) => {
-    const newPlace = { lat: coords.lat, lng: coords.lng };
-    setPlaces([...places, newPlace]);
+  const addPlace = (place) => {
+    setPlaces([...places, place]);
   };
 
   const fetchAndDisplayRoutes = async (houses, places) => {
@@ -50,6 +49,8 @@ const App = () => {
         onAddHouse={addHouse}
         onAddPlace={addPlace}
         fetchAndDisplayRoutes={fetchAndDisplayRoutes}
+        selectedHouse={selectedHouse}
+        setSelectedHouse={setSelectedHouse}
       />
     </div>
   );
