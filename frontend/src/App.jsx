@@ -79,12 +79,12 @@ function App() {
             'Authorization': `Bearer ${Cookies.get().token}`
           },
           body: JSON.stringify({
-            price: 300,
-            construction_materials: "acero",
-            size: 270,
-            rooms: 2,
-            property_type: data.name,
-            house_coords: [data.lat, data.lng],
+            price: data.price,
+            construction_materials: data.construction_materials,
+            size: data.size,
+            rooms: data.rooms,
+            property_type: data.property_type,
+            house_coords: [data.house_coords[0], data.house_coords[1]],
             name: Cookies.get().token
           })
         })
@@ -102,8 +102,8 @@ function App() {
           },
           body: JSON.stringify({
             //id: `place-${Date.now()}`, // ID único
-            name_place: data.name, // Personaliza según tu flujo
-            place_coords: [data.lat, data.lng],
+            name_place: data.name_place, // Personaliza según tu flujo
+            place_coords: [data.place_coords[0], data.place_coords[1]],
             //type: 'place',
             name: Cookies.get().token
           }),
@@ -115,7 +115,7 @@ function App() {
     } catch (error) {
       console.error(error)
       console.log(error)
-    }
+    } 
   };
 
   const saveRouteToBackend = async (route) => {
@@ -202,6 +202,8 @@ function App() {
                   fetchAndDisplayRoutes={fetchAndDisplayRoutes}
                   selectedHouse={selectedHouse}
                   setSelectedHouse={setSelectedHouse}
+
+                  saveToBackend={saveToBackend}
                 />
               </div>
             </div>

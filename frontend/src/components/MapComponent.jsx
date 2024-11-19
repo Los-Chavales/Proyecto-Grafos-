@@ -33,6 +33,7 @@ const MapComponent = ({
   fetchAndDisplayRoutes,
   selectedHouse,
   setSelectedHouse,
+  saveToBackend
 }) => {
   const [tempMarker, setTempMarker] = useState(null);
   const [tempName, setTempName] = useState('');
@@ -97,7 +98,7 @@ const MapComponent = ({
               <button onClick={() => handleAddLocation('house')}>Guardar como Casa</button>
               <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>e */}
               <p><strong>Coordenadas:</strong>{tempMarker.lat} {tempMarker.lng}</p>
-              <Register_entity newLocation={tempMarker} /> 
+              <Register_entity newLocation={tempMarker} saveToBackend={saveToBackend} /> 
             </Popup>
           </Marker>
         )}

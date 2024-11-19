@@ -6,7 +6,7 @@ import { usePlace } from "../context/Place_context";
 import { useHouse } from "../context/House_context";
 import Cookies from "js-cookie";
 
-const Register_entity = (newLocation) => {
+const Register_entity = ({newLocation, saveToBackend}) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { user, userDecoded } = useAuth();
   const { register_place } = usePlace();
@@ -31,23 +31,27 @@ const Register_entity = (newLocation) => {
         size: data.size,
         rooms: data.rooms,
         property_type: data.property_type,
-        house_coords: [newLocation.newLocation.lat, newLocation.newLocation.lng]
+        house_coords: [newLocation.lat, newLocation.lng]
       }
 
-      register_house(formData, Cookies.get().token)
+      saveToBackend("house", formData)
+
+      //register_house(formData, Cookies.get().token)
 
     } else if (userDecoded && userDecoded.data.rol == "cliente"){
   
       formData = {
         name: Cookies.get().token,
         name_place:data.name_place,
-        place_coords: [newLocation.newLocation.lat, newLocation.newLocation.lng]
+        place_coords: [newLocation.lat, newLocation.lng]
       }
 /* 
       console.log("Va saliendo")
       console.log(formData) */
-  
-      register_place(formData, Cookies.get().token)  
+      
+      saveToBackend("pace", formData)
+
+      //register_place(formData, Cookies.get().token)  
     }
   };
 
