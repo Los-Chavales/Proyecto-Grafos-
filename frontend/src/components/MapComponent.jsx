@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -23,22 +23,24 @@ const MapEventHandler = ({ onMapClick }) => {
   return null;
 };
 
-const MapComponent = ({
-  houses,
-  places,
-  routes,
-  onMapClick,
-  setOrigin,
-  setDestination,
-  calculateAndDisplayRoute,
-  saveRoute,
-}) => {
+const MapComponent = ({ houses, places, routes, onAddHouse, onAddPlace, fetchAndDisplayRoutes }) => {
   const [tempMarker, setTempMarker] = useState(null);
 
   const handleAddLocation = (type) => {
-    onMapClick({ lat: tempMarker.lat, lng: tempMarker.lng }, type);
+    if (type === 'house') {
+      onAddHouse(tempMarker); // Guarda la casa
+    } else if (type === 'place') {
+      onAddPlace(tempMarker); // Guarda el lugar
+    }
     setTempMarker(null);
   };
+
+  useEffect(() => {
+    if (houses.length > 0 && places.length > 0) {
+      // Calcula rutas automáticamente cuando hay casas y lugares
+      fetchAndDisplayRoutes(houses, places);
+    }
+  }, [houses, places, fetchAndDisplayRoutes]);
 
   return (
     <MapContainer center={[10.0, -69.3]} zoom={13} style={{ height: '500px', width: '100%' }}>
@@ -50,7 +52,7 @@ const MapComponent = ({
       {/* Manejo de eventos del mapa */}
       <MapEventHandler
         onMapClick={(latlng) => {
-          setTempMarker(latlng);
+          setTempMarker(latlng); // Marca temporalmente la posición clickeada
         }}
       />
 
@@ -58,8 +60,8 @@ const MapComponent = ({
       {tempMarker && (
         <Marker position={tempMarker}>
           <Popup>
-            <button onClick={() => handleAddLocation('house')}>Añadir Casa</button>
-            <button onClick={() => handleAddLocation('place')}>Añadir Lugar</button>
+            <button onClick={() => handleAddLocation('house')}>Guardar como Casa</button>
+            <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>
           </Popup>
         </Marker>
       )}
@@ -67,42 +69,22 @@ const MapComponent = ({
       {/* Marcadores de casas */}
       {houses.map((house, idx) => (
         <Marker key={idx} position={[house.lat, house.lng]} icon={houseIcon}>
-          <Popup>{house.id}</Popup>
+          <Popup>Casa {idx + 1}</Popup>
         </Marker>
       ))}
 
       {/* Marcadores de lugares */}
       {places.map((place, idx) => (
         <Marker key={idx} position={[place.lat, place.lng]} icon={placeIcon}>
-          <Popup>
-            <p>{place.id}</p>
-            <button onClick={() => setOrigin(place)}>Establecer como Origen</button>
-            <button onClick={() => setDestination(place)}>Establecer como Destino</button>
-          </Popup>
+          <Popup>Lugar {idx + 1}</Popup>
         </Marker>
       ))}
 
       {/* Líneas de las rutas */}
       {routes.map((route, idx) => (
-        <Polyline
-          key={idx}
-          positions={route.geometry}
-          color="blue"
-          eventHandlers={{
-            click: () => {
-              const popup = L.popup()
-                .setLatLng(route.geometry[0])
-                .setContent(
-                  `<div>
-                     <p>Distancia: ${route.distance.toFixed(2)} km</p>
-                     <button id="saveRouteBtn">Guardar Ruta</button>
-                   </div>`
-                )
-                .openOn(this._map);
-              document.getElementById('saveRouteBtn').addEventListener('click', () => saveRoute(route));
-            },
-          }}
-        />
+        <Polyline key={idx} positions={route.geometry} color="blue">
+          <Popup>Distancia: {route.distance.toFixed(2)} km</Popup>
+        </Polyline>
       ))}
     </MapContainer>
   );

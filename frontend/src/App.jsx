@@ -1,69 +1,55 @@
 import React, { useState } from 'react';
 import MapComponent from './components/MapComponent';
+import axios from 'axios';
 
 const App = () => {
   const [houses, setHouses] = useState([]);
   const [places, setPlaces] = useState([]);
   const [routes, setRoutes] = useState([]);
-  const [origin, setOrigin] = useState(null);
-  const [destination, setDestination] = useState(null);
 
-  // Añadir lugar/casa al hacer clic
-  const addLocation = async (coordinates, type) => {
-    const newLocation = { ...coordinates, id: Date.now(), type };
-    if (type === 'house') {
-      setHouses((prev) => [...prev, newLocation]);
-    } else if (type === 'place') {
-      setPlaces((prev) => [...prev, newLocation]);
-    }
+  const addHouse = (coords) => {
+    const newHouse = { lat: coords.lat, lng: coords.lng };
+    setHouses([...houses, newHouse]);
   };
 
-  // Calcular ruta y distancia
-  const calculateAndDisplayRoute = async () => {
-    if (origin && destination) {
-      const response = await fetch(
-        `http://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`
-      );
-      const data = await response.json();
-      if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        setRoutes([
-          {
-            geometry: route.geometry.coordinates.map(([lon, lat]) => [lat, lon]),
-            distance: route.distance / 1000,
-            id: `${origin.id}-${destination.id}`,
-          },
-        ]);
+  const addPlace = (coords) => {
+    const newPlace = { lat: coords.lat, lng: coords.lng };
+    setPlaces([...places, newPlace]);
+  };
+
+  const fetchAndDisplayRoutes = async (houses, places) => {
+    const newRoutes = [];
+    for (const house of houses) {
+      for (const place of places) {
+        try {
+          // Usa la API de OSRM para obtener la ruta más corta
+          const response = await axios.get(
+            `http://router.project-osrm.org/route/v1/driving/${house.lng},${house.lat};${place.lng},${place.lat}`,
+            { params: { overview: 'full', geometries: 'geojson' } }
+          );
+          const route = response.data.routes[0];
+          newRoutes.push({
+            geometry: route.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+            distance: route.distance / 1000, // Convierte metros a kilómetros
+          });
+        } catch (error) {
+          console.error('Error al calcular la ruta:', error);
+        }
       }
     }
-  };
-
-  // Guardar ruta en la base de datos
-  const saveRoute = async (route) => {
-    await fetch('/api/save-route', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        originId: origin.id,
-        destinationId: destination.id,
-        distance: route.distance,
-      }),
-    });
-    alert('Ruta guardada en la base de datos.');
+    setRoutes(newRoutes);
   };
 
   return (
     <div>
-      <h1>Mapa Interactivo</h1>
+      <h1>Mapa de Rutas</h1>
       <MapComponent
         houses={houses}
         places={places}
         routes={routes}
-        onMapClick={addLocation}
-        setOrigin={setOrigin}
-        setDestination={setDestination}
-        calculateAndDisplayRoute={calculateAndDisplayRoute}
-        saveRoute={saveRoute}
+        onAddHouse={addHouse}
+        onAddPlace={addPlace}
+        fetchAndDisplayRoutes={fetchAndDisplayRoutes}
       />
     </div>
   );
