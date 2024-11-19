@@ -88,15 +88,16 @@ const MapComponent = ({
           <Marker position={tempMarker}>
             <Popup>
               {/* Coordenadas seleccionadas: {tempMarker.join(', ')} */}
-              <input
+              {/* <input
                 type="text"
                 placeholder="Nombre"
                 value={tempName}
-                onChange={(e) => setTempName(e.target.value)}
+                onChang={(e) => setTempName(e.target.value)}
               />
               <button onClick={() => handleAddLocation('house')}>Guardar como Casa</button>
-              <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>
-              {/* <Register_entity newLocation={tempMarker.join(', ')}/> */}
+              <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>e */}
+              <p><strong>Coordenadas:</strong>{tempMarker.lat} {tempMarker.lng}</p>
+              <Register_entity newLocation={tempMarker} /> 
             </Popup>
           </Marker>
         )}
