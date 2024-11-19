@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import MapComponent from './MapComponent'
-import { fetchLocations, saveLocation, fetchRoutes, saveRoute } from './api'
+import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card"
+import { Button } from "./components/ui/button"
+import MapComponent from './components/MapComponent'
+import { fetchLocations, saveLocation, fetchRoutes, saveRoute } from './utils/api/api'
 
 export default function App() {
   const [locations, setLocations] = useState([])

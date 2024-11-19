@@ -4,17 +4,18 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select } from "@/components/ui/select"
+import 'leaflet-geometryutil'
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
+import { Select } from "./ui/select"
 
-delete L.Icon.Default.prototype._getIconUrl;
+/*delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: '/marker-icon-2x.png',
   iconUrl: '/marker-icon.png',
   shadowUrl: '/marker-shadow.png',
 });
-
+*/
 const RoutingMachine = ({ start, end, onRouteFound }) => {
   const map = useMap()
   const [routeCoordinates, setRouteCoordinates] = useState([])
@@ -89,10 +90,14 @@ export default function MapComponent({
   const [newLocationPosition, setNewLocationPosition] = useState(null)
   const [currentRoute, setCurrentRoute] = useState(null)
   const mapRef = useRef(null)
+  const [selectedLocation, setSelectedLocation] = useState(null)
 
   const handleMapClick = useCallback((e) => {
-    setNewLocationPosition(e.latlng)
-  }, [])
+    if (!routeStart || !routeEnd) {
+      setNewLocationPosition(e.latlng)
+      setSelectedLocation(null)
+    }
+  }, [routeStart, routeEnd])
 
   const handleSaveLocation = useCallback((locationData) => {
     onAddLocation(locationData)
@@ -104,36 +109,32 @@ export default function MapComponent({
   }, [])
 
   const handleRouteClick = useCallback((e, route) => {
-    if (route) {
+    if (route && mapRef.current) {
       const map = mapRef.current
-      if (map) {
-        const clickLatLng = e.latlng
-        const closestPoint = L.GeometryUtil.closest(map, route.coordinates, clickLatLng)
-        
-        if (closestPoint) {
-          const popupContent = `
+      const clickLatLng = e.latlng
+      const closestPoint = L.GeometryUtil.closest(map, route.coordinates, clickLatLng)
+      
+      if (closestPoint) {
+        L.popup()
+          .setLatLng(closestPoint)
+          .setContent(`
             <div>
               <p>Distancia: ${route.distance.toFixed(2)} km</p>
               <button id="saveRouteBtn" class="px-4 py-2 bg-blue-500 text-white rounded">Guardar Ruta</button>
             </div>
-          `
+          `)
+          .openOn(map)
 
-          const popup = L.popup()
-            .setLatLng(closestPoint)
-            .setContent(popupContent)
-            .openOn(map)
-
-          // Add event listener to the save button
-          setTimeout(() => {
-            const saveBtn = document.getElementById('saveRouteBtn')
-            if (saveBtn) {
-              saveBtn.addEventListener('click', () => {
-                onSaveRoute(route)
-                popup.close()
-              })
-            }
-          }, 0)
-        }
+        // Add event listener to the save button
+        setTimeout(() => {
+          const saveBtn = document.getElementById('saveRouteBtn')
+          if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+              onSaveRoute(route)
+              map.closePopup()
+            })
+          }
+        }, 0)
       }
     }
   }, [onSaveRoute])
@@ -155,18 +156,30 @@ export default function MapComponent({
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <MapEvents />
       {locations.map((location) => (
-        <Marker key={location.id} position={[location.lat, location.lng]}>
-          <Popup>
-            <div>
-              <h3>{location.name} ({location.type})</h3>
-              <Button onClick={() => onSetRoute(location, true)}>Establecer como inicio</Button>
-              <Button onClick={() => onSetRoute(location, false)}>Establecer como destino</Button>
-            </div>
-          </Popup>
+        <Marker 
+          key={`location-${location.id}-${location.lat.toFixed(6)}-${location.lng.toFixed(6)}`}
+          position={[location.lat, location.lng]}
+          eventHandlers={{
+            click: () => setSelectedLocation(location),
+          }}
+        >
+          {selectedLocation === location && (
+            <Popup>
+              <div>
+                <h3>{location.name} ({location.type})</h3>
+                <Button onClick={() => onSetRoute(location, true)}>Establecer como inicio</Button>
+                <Button onClick={() => onSetRoute(location, false)}>Establecer como destino</Button>
+              </div>
+            </Popup>
+          )}
         </Marker>
       ))}
       {newLocationPosition && (
-        <Popup position={[newLocationPosition.lat, newLocationPosition.lng]}>
+        <Popup 
+          key={`new-location-${newLocationPosition.lat}-${newLocationPosition.lng}`}
+          position={[newLocationPosition.lat, newLocationPosition.lng]}
+          onClose={() => setNewLocationPosition(null)}
+        >
           <AddLocationForm 
             position={newLocationPosition}
             onSave={handleSaveLocation}
@@ -176,6 +189,7 @@ export default function MapComponent({
       )}
       {routeStart && routeEnd && (
         <RoutingMachine 
+          key={`route-${routeStart.id}-${routeEnd.id}`}
           start={routeStart} 
           end={routeEnd} 
           onRouteFound={(distance, coordinates) => {
@@ -184,9 +198,9 @@ export default function MapComponent({
           }} 
         />
       )}
-      {routes.map((route) => (
+      {routes.map((route, index) => (
         <Polyline 
-          key={route.id} 
+          key={`saved-route-${index}-${route.start.id}-${route.end.id}`}
           positions={route.coordinates} 
           color="#4CAF50" 
           weight={4} 
@@ -197,6 +211,7 @@ export default function MapComponent({
       ))}
       {currentRoute && (
         <Polyline 
+          key={`current-route-${currentRoute.start.id}-${currentRoute.end.id}`}
           positions={currentRoute.coordinates} 
           color="#6366F1" 
           weight={6} 
