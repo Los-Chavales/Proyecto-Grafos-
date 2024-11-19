@@ -7,7 +7,9 @@ const Register = ({ isOpen, closeModal }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { signup, user, isAuth, errorsServer } = useAuth();
 
-  const onSubmit = (data) => signup(data);
+  const onSubmit = (data) => {
+    signup(data)
+  };
 
   if (!isOpen) return null;
 
@@ -17,6 +19,13 @@ const Register = ({ isOpen, closeModal }) => {
         <div className='login_container_close'>
           <button onClick={closeModal} className='login_close'>X</button>
         </div>
+
+        {user && 
+          <div>
+             <h2 className='welcome_color'>Has sido registrado</h2>
+           </div>
+        }
+
         <form className='login_container_form' onSubmit={handleSubmit(onSubmit)}> 
           <h2>Regístrate</h2>
           <input className='login_form_input' type='text' name='name' placeholder='nombre' 

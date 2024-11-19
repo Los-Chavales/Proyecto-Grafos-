@@ -5,11 +5,27 @@ import "../styles/login.css";
 
 const Login = ({ isOpen_login, closeModal_login }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { signin, user, isAuth, errorsServer } = useAuth();
+  const { signin, user, userDecoded, isAuth, errorsServer } = useAuth();
 
   const onSubmit = (data) => signin(data);
 
   if (!isOpen_login) return null;
+
+  if(userDecoded){
+    return (  
+    <div className='login_container_modal'>
+      <div className='login_container'>
+        <div className='login_container_close'>
+          <button onClick={closeModal_login} className='login_close'>X</button>
+        </div>
+
+        <div className='container_tittle'>
+          <h2 className='tittle_welcome'><span className='tittle_welcome welcome_color'>Bienvenido</span> {userDecoded.data.name}</h2>
+        </div>
+
+      </div>
+    </div>)
+  } 
 
   return (
     <div className='login_container_modal'>

@@ -45,6 +45,8 @@ export const AuthProvider = ({ children }) => {
             setUser(RESPONSE.data)
             setIsAuth(true)
 
+            return true
+
         } catch (error) {
             //console.debug(error)
             let menError = error.message;
@@ -89,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         Cookies.remove("token");
         setUser(null);
         setIsAuth(false);
+        setUserDecoded(null)
     };
 
     //Para validar el token
