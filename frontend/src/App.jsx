@@ -1,53 +1,76 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card"
-import { Button } from "./components/ui/button"
-import MapComponent from './components/MapComponent'
-import { fetchLocations } from './utils/api/api'
+import { useState, useEffect, useCallback } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import MapComponent from './MapComponent'
+import { fetchLocations, saveLocation, fetchRoutes, saveRoute } from './api'
 
 export default function App() {
   const [locations, setLocations] = useState([])
+  const [routes, setRoutes] = useState([])
   const [routeStart, setRouteStart] = useState(null)
   const [routeEnd, setRouteEnd] = useState(null)
   const [distance, setDistance] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const loadLocations = async () => {
+    const loadData = async () => {
       try {
-        const data = await fetchLocations()
-        setLocations(data)
+        const [locationsData, routesData] = await Promise.all([
+          fetchLocations(),
+          fetchRoutes()
+        ])
+        setLocations(Array.isArray(locationsData) ? locationsData : [])
+        setRoutes(Array.isArray(routesData) ? routesData : [])
       } catch (error) {
-        console.error("Error fetching locations:", error)
+        console.error("Error fetching data:", error)
       } finally {
         setIsLoading(false)
       }
     }
 
-    loadLocations()
+    loadData()
   }, [])
 
-  const handleSetRoute = (location, isStart) => {
+  const handleSetRoute = useCallback((location, isStart) => {
     if (isStart) {
       setRouteStart(location)
     } else {
       setRouteEnd(location)
     }
-  }
+  }, [])
 
-  const handleRouteFound = (distance) => {
+  const handleRouteFound = useCallback((distance) => {
     setDistance(distance)
-  }
+  }, [])
 
-  const handleClearRoute = () => {
+  const handleClearRoute = useCallback(() => {
     setRouteStart(null)
     setRouteEnd(null)
     setDistance(null)
-  }
+  }, [])
+
+  const handleAddLocation = useCallback(async (locationData) => {
+    try {
+      const newLocation = await saveLocation(locationData)
+      setLocations(prevLocations => [...prevLocations, newLocation])
+    } catch (error) {
+      console.error("Error saving location:", error)
+    }
+  }, [])
+
+  const handleSaveRoute = useCallback(async (route) => {
+    try {
+      const newRoute = await saveRoute(route)
+      setRoutes(prevRoutes => [...prevRoutes, newRoute])
+    } catch (error) {
+      console.error("Error saving route:", error)
+    }
+  }, [])
 
   if (isLoading) {
-    return <div>Cargando ubicaciones...</div>
+    return <div>Cargando datos...</div>
   }
 
   return (
@@ -59,22 +82,17 @@ export default function App() {
         <CardContent>
           <MapComponent
             locations={locations}
+            routes={routes}
             routeStart={routeStart}
             routeEnd={routeEnd}
             onSetRoute={handleSetRoute}
             onRouteFound={handleRouteFound}
+            onAddLocation={handleAddLocation}
+            onSaveRoute={handleSaveRoute}
           />
           <div className="mt-4">
             <Button onClick={handleClearRoute}>Limpiar Ruta</Button>
           </div>
-          {distance !== null && routeStart && routeEnd && (
-            <div className="mt-4 p-4 bg-secondary text-secondary-foreground rounded-md">
-              <h3 className="text-lg font-semibold">Información de la Ruta</h3>
-              <p>Desde: {routeStart.name}</p>
-              <p>Hasta: {routeEnd.name}</p>
-              <p className="font-bold">Distancia total: {distance.toFixed(2)} km</p>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>
