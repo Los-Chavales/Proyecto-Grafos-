@@ -30,8 +30,6 @@ function App() {
   const [routes, setRoutes] = useState([]);
   const [selectedHouse, setSelectedHouse] = useState(null);
 
-  const cookies = Cookies.get();
-
   //Para obtener los lugares de la DB
   const getData = async () => {
     try {
@@ -79,7 +77,7 @@ function App() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${cookies.token}`,
+            'Authorization': `Bearer ${Cookies.get().token}`
           },
           body: JSON.stringify({
             price: 300,
@@ -88,26 +86,30 @@ function App() {
             rooms: 2,
             property_type: data.name,
             house_coords: [data.lat, data.lng],
-            name: cookies.token
-          }),
+            name: Cookies.get().token
+          })
         })
         const infoH = await response.json();
         const getHouses = infoH.data;
         console.debug(getHouses)
       } else {
-        await fetch(import.meta.env.VITE_API_URL + '/places/create_place', {
+        let response = await fetch(import.meta.env.VITE_API_URL + '/places/create_place', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Cookies.get().token}`
           },
           body: JSON.stringify({
             //id: `place-${Date.now()}`, // ID único
             name_place: data.name, // Personaliza según tu flujo
             place_coords: [data.lat, data.lng],
             //type: 'place',
-            token: import.meta.env.VITE_TOKEN_PLACE,
+            name: Cookies.get().token
           }),
-        });
+        })
+        const infoP = await response.json();
+        const gePlaces = infoP.data;
+        console.debug(gePlaces) 
       }
     } catch (error) {
       console.error(error)

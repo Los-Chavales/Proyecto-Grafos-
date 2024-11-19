@@ -18,6 +18,8 @@ export const AuthProvider = ({ children }) => {
     const [errorsServer, setErrorsServer] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [userToken, setUserToken] = useState("")
+
     //Limpiar errores en el formulario de login
     useEffect(() => {
         if (errorsServer.length > 0) {
@@ -88,7 +90,13 @@ export const AuthProvider = ({ children }) => {
     }
     //Cerrar sesión
     const logout = () => {
+/*         console.log("antes de limpiar")
+        console.log(Cookies.get().token) */
+
         Cookies.remove("token");
+    
+     /*    console.log("todo debe andar limpio")
+        console.log(Cookies.get().token) */
         setUser(null);
         setIsAuth(false);
         setUserDecoded(null)
