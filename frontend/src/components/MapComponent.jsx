@@ -1,87 +1,128 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import houseIconUrl from '../assets/house-icon.png'; // Asegúrate de tener estos íconos
-import placeIconUrl from '../assets/place-icon.png';
-
+import 'leaflet/dist/leaflet.css';
 import Register_entity from './Register_entity_form';
 
+// Iconos personalizados
 const houseIcon = new L.Icon({
-  iconUrl: houseIconUrl,
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/69/69524.png',
   iconSize: [25, 25],
 });
 
 const placeIcon = new L.Icon({
-  iconUrl: placeIconUrl,
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854878.png',
   iconSize: [25, 25],
 });
 
-const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
-  const [selectedPosition, setSelectedPosition] = useState(null);
+const MapEventHandler = ({ onMapClick }) => {
+  useMapEvents({
+    click(e) {
+      onMapClick(e.latlng); // Llama a la función `onMapClick` del componente padre con las coordenadas
+    },
+  });
+  return null;
+};
 
-  // Componente para capturar clics en el mapa
-  const LocationMarker = () => {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        setSelectedPosition([lat, lng]);
-        onPlaceSelect({ lat, lng }); // Notifica al componente padre
-      },
-    });
+const MapComponent = ({
+  houses,
+  places,
+  routes,
+  onAddHouse,
+  onAddPlace,
+  fetchAndDisplayRoutes,
+  selectedHouse,
+  setSelectedHouse,
+}) => {
+  const [tempMarker, setTempMarker] = useState(null);
+  const [tempName, setTempName] = useState('');
 
-    return selectedPosition ? (
-      <Marker position={selectedPosition}>
-        <Popup>
-          Coordenadas seleccionadas: {selectedPosition.join(', ')}
-          <Register_entity newLocation={selectedPosition.join(', ')}/>
-        </Popup>
-      </Marker>
-    ) : null;
+  const handleAddLocation = (type) => {
+    if (type === 'house') {
+      onAddHouse({ ...tempMarker, name: tempName });
+    } else if (type === 'place') {
+      onAddPlace({ ...tempMarker, name: tempName });
+    }
+    setTempMarker(null);
+    setTempName('');
   };
 
+  useEffect(() => {
+    if (selectedHouse && places.length > 0) {
+      // Calcula rutas automáticamente cuando una casa está seleccionada
+      fetchAndDisplayRoutes([selectedHouse], places);
+    }
+  }, [selectedHouse, places, fetchAndDisplayRoutes]);
+
   return (
-    <MapContainer
-      center={[9.3022, -70.5920]} // Coordenadas iniciales
-      zoom={13}
-      style={{ height: '90vh', width: '100%' }}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
+    <div>
+      <select
+        value={selectedHouse ? selectedHouse.name : ''}
+        onChange={(e) =>
+          setSelectedHouse(houses.find((house) => house.name === e.target.value) || null)
+        }
+      >
+        <option value="">Selecciona una casa</option>
+        {houses.map((house, idx) => (
+          <option key={idx} value={house.name}>
+            {house.name}
+          </option>
+        ))}
+      </select>
 
-      {/* Marcadores de casas */}
-      {houses.map((house, idx) => (
-        <Marker key={idx} position={house.house_coords} icon={houseIcon}>
-          <Popup>{house.property_type}</Popup>
-        </Marker>
-      ))}
-
-      {/* Marcadores de lugares */}
-      {places.map((place, idx) => (
-        <Marker key={idx} position={place.place_coords} icon={placeIcon}>
-          <Popup>{place.name_place}</Popup>
-        </Marker>
-      ))}
-
-      {/* Líneas para distancias */}
-      {/*distances.map((dist, idx) => (
-        <Polyline
-          key={idx}
-          positions={[
-            [dist.house.lat, dist.house.lng],
-            [dist.place.lat, dist.place.lng],
-          ]}
-          color="blue"
+      <MapContainer center={[9.3022, -70.5920]} zoom={13} style={{ height: '90vh', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
         />
-      ))*/}
 
-      {/* Clic en el mapa para agregar nodos */}
-      <LocationMarker onPlaceSelect={onPlaceSelect} />
+        {/* Manejo de eventos del mapa */}
+        <MapEventHandler
+          onMapClick={(latlng) => {
+            setTempMarker(latlng); // Marca temporalmente la posición clickeada
+          }}
+        />
 
-    </MapContainer>
+        {/* Marcador temporal */}
+        {tempMarker && (
+          <Marker position={tempMarker}>
+            <Popup>
+              {/* Coordenadas seleccionadas: {tempMarker.join(', ')} */}
+              <input
+                type="text"
+                placeholder="Nombre"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+              />
+              <button onClick={() => handleAddLocation('house')}>Guardar como Casa</button>
+              <button onClick={() => handleAddLocation('place')}>Guardar como Lugar</button>
+              {/* <Register_entity newLocation={tempMarker.join(', ')}/> */}
+            </Popup>
+          </Marker>
+        )}
+
+        {/* Marcadores de casas */}
+        {houses.map((house, idx) => (
+          <Marker key={idx} position={[house.lat, house.lng]} icon={houseIcon}>
+            <Popup>{house.name}</Popup>
+          </Marker>
+        ))}
+
+        {/* Marcadores de lugares */}
+        {places.map((place, idx) => (
+          <Marker key={idx} position={[place.lat, place.lng]} icon={placeIcon}>
+            <Popup>{place.name}</Popup>
+          </Marker>
+        ))}
+
+        {/* Líneas de las rutas */}
+        {routes.map((route, idx) => (
+          <Polyline key={idx} positions={route.geometry} color="blue">
+            <Popup>Distancia: {route.distance.toFixed(2)} km</Popup>
+          </Polyline>
+        ))}
+      </MapContainer>
+    </div>
   );
 };
 
