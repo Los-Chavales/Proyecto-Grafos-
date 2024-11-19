@@ -9,6 +9,7 @@ import { PlaceProvider } from './context/Place_context';
 import { HouseProvider } from './context/House_context';
 import axios from 'axios';
 //const { signin, user, userDecoded, isAuth, errorsServer } = AuthProvider();
+import Cookies from "js-cookie";
 
 //Página 404
 
@@ -28,6 +29,8 @@ function App() {
   const [houses, setHouses] = useState([]); // Casas existentes
   const [routes, setRoutes] = useState([]);
   const [selectedHouse, setSelectedHouse] = useState(null);
+
+  const cookies = Cookies.get();
 
   //Para obtener los lugares de la DB
   const getData = async () => {
@@ -76,6 +79,7 @@ function App() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${cookies.token}`,
           },
           body: JSON.stringify({
             price: 300,
@@ -84,7 +88,7 @@ function App() {
             rooms: 2,
             property_type: data.name,
             house_coords: [data.lat, data.lng],
-            token: import.meta.env.VITE_TOKEN_HOUSE,
+            name: cookies.token
           }),
         })
         const infoH = await response.json();
