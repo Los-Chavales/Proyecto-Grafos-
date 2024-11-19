@@ -68,6 +68,61 @@ class Router_Models {
 
   }
 
+  async see_all_relationships(route){ //Ver las relaciones
+
+    const query = `
+      MATCH
+      (h:house {id:$id_house})
+      -[r:route]-
+      (p:place) 
+      RETURN  r
+    `;
+    
+    const params = {
+      id_house: route.id_house,
+    };
+    
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query,params);
+
+      
+      if(resultObj.records.length > 0){
+
+        let result = 0;
+
+        for (let i = 0; i < resultObj.records.length; i++) {
+          result += resultObj.records[i].get(0).properties.distance
+          //routes.push(resultObj.records[i].get(0).properties)
+        }
+
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: result
+        };
+      }else{
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
+
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }  
+
+  }
+
   async relate_house_and_place(new_route){ //Relacionar una casa con un lugar
 
     let routeFound = await this.check_relationship(new_route) //Verificar que no exista una relación ya registrada

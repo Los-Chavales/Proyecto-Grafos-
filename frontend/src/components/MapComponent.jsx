@@ -21,6 +21,21 @@ const placeIcon = new L.Icon({
 const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
   const [selectedPosition, setSelectedPosition] = useState(null);
 
+  const [checkedState, setCheckedState] = useState(
+    new Array().fill(false)
+  );
+
+  const handleOnChange = (position) => {
+    const updatedCheckedState = checkedState.map((item, index) =>
+      index === position ? !item : item
+    );
+
+    setCheckedState(updatedCheckedState);
+    console.log("ASi vamos aparentemente")
+    console.log(updatedCheckedState)
+  };
+
+
   // Componente para capturar clics en el mapa
   const LocationMarker = () => {
     useMapEvents({
@@ -55,14 +70,26 @@ const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
       {/* Marcadores de casas */}
       {houses.map((house, idx) => (
         <Marker key={idx} position={house.house_coords} icon={houseIcon}>
-          <Popup>{house.property_type}</Popup>
+          <Popup>
+            <input 
+              type='checkbox' 
+              id={house.id} 
+              name={house.id} 
+              value={house.id} 
+              checked={checkedState[house.id]}
+              onChange={() => handleOnChange(house.id)}
+              />
+            {house.property_type}
+          </Popup>
         </Marker>
       ))}
 
       {/* Marcadores de lugares */}
       {places.map((place, idx) => (
         <Marker key={idx} position={place.place_coords} icon={placeIcon}>
-          <Popup>{place.name_place}</Popup>
+          <Popup>
+            {place.name_place}
+          </Popup>
         </Marker>
       ))}
 
