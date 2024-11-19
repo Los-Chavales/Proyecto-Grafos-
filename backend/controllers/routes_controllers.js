@@ -19,7 +19,7 @@ class Routes_Controllers {
 
     }
 
-    results_houses.sort((a, b) => a.data - b.data)
+    results_houses.sort((a, b) => a.distance - b.distance)
 
     return res.status(200).json({
       message: "conectado",
