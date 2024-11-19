@@ -4,6 +4,7 @@ import "../styles/register_entity.css";
 import { useAuth } from "../context/Auth_context";
 import { usePlace } from "../context/Place_context";
 import { useHouse } from "../context/House_context";
+import Cookies from "js-cookie";
 
 const Register_entity = (newLocation) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -17,39 +18,36 @@ const Register_entity = (newLocation) => {
 
     if(userDecoded && userDecoded.data.rol == "propietario"){
 
-      let result = newLocation.newLocation.split(",")
+ /*      let result = newLocation.newLocation.split(",")
   
       for (let i = 0; i < result.length; i++) {
         result[i] = Number(result[i].trim());
       }
-
+ */
       formData = {
-        name: userDecoded.data.name,
+        name: Cookies.get().token,
         price: data.price,
         construction_materials: data.construction_materials,
         size: data.size,
         rooms: data.rooms,
         property_type: data.property_type,
-        house_coords: result
+        house_coords: [newLocation.newLocation.lat, newLocation.newLocation.lng]
       }
 
-      register_house(formData, user.token)
+      register_house(formData, Cookies.get().token)
 
     } else if (userDecoded && userDecoded.data.rol == "cliente"){
-
-      let result = newLocation.newLocation.split(",")
-  
-      for (let i = 0; i < result.length; i++) {
-        result[i] = Number(result[i].trim());
-      }
   
       formData = {
-        name: userDecoded.data.name,
+        name: Cookies.get().token,
         name_place:data.name_place,
-        place_coords: result
+        place_coords: [newLocation.newLocation.lat, newLocation.newLocation.lng]
       }
+/* 
+      console.log("Va saliendo")
+      console.log(formData) */
   
-      register_place(formData, user.token) 
+      register_place(formData, Cookies.get().token)  
     }
   };
 
