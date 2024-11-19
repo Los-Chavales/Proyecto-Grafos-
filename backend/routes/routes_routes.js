@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const router_controllers = require("../controllers/routes_controllers");
 
+//Crear una relación casa a lugar (actual)
+router.post("/create_route", router_controllers.create_route)
+
 //Relacionar una casa con un lugar
 router.post("/check_relation", router_controllers.check_relationship)
 
