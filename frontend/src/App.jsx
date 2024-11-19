@@ -13,6 +13,7 @@ export default function App() {
   const [routeEnd, setRouteEnd] = useState(null)
   const [distance, setDistance] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [nextId, setNextId] = useState(locations.length + 2);
 
   useEffect(() => {
     const loadData = async () => {
@@ -23,6 +24,7 @@ export default function App() {
         ])
         setLocations(Array.isArray(locationsData) ? locationsData : [])
         setRoutes(Array.isArray(routesData) ? routesData : [])
+        setNextId(locationsData.length + 2)
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
@@ -56,9 +58,9 @@ export default function App() {
       const newLocation = await saveLocation(locationData)
       setLocations(prevLocations => [...prevLocations, newLocation])
     } catch (error) {
-      console.error("Error saving location:", error)
+      console.error("Error saving location:", error);
     }
-  }, [])
+  }, [nextId]);
 
   const handleSaveRoute = useCallback(async (route) => {
     try {

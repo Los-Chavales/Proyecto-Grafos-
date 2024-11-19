@@ -150,14 +150,14 @@ export default function MapComponent({
     <MapContainer 
       center={[9.3343, -70.5853]} 
       zoom={12} 
-      style={{ height: '400px', width: '100%' }}
+      style={{ height: '80vh', width: '100%' }}
       ref={mapRef}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <MapEvents />
       {locations.map((location) => (
         <Marker 
-          key={`location-${location.id}-${location.lat.toFixed(6)}-${location.lng.toFixed(6)}`}
+          key={`location-${location.id}`}
           position={[location.lat, location.lng]}
           eventHandlers={{
             click: () => setSelectedLocation(location),
