@@ -25,6 +25,14 @@ class Places_Controllers {
       data: result.data
     });
   }
+
+  async delete_place(req, res){
+    let result = await places_model.delete_place(req.params.index)
+    return res.status(result.status).json({
+      message: result.message,
+      data: result.data
+    });
+  }
 }
 
 module.exports = new Places_Controllers();

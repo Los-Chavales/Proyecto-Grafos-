@@ -93,7 +93,7 @@ class Houses_Models {
 
     //Decodificar el token para ver quién registro la casa
 
-    let decodedToken = decodificar(new_house.token)
+    //let decodedToken = decodificar(new_house.token)
 
     const query = `
     MATCH (u:user) 
@@ -111,7 +111,7 @@ class Houses_Models {
     RETURN h`;
     
     const params = {
-      name: decodedToken.name,
+      name: new_house.name,
       id: uuidv4(),
       price: new_house.price, 
       construction_materials: new_house.construction_materials,
@@ -145,6 +145,41 @@ class Houses_Models {
         data: err
       };
     } 
+  }
+
+  async delete_home(id_home) { //Eliminar una casa
+
+    console.log("DELETE:")
+
+    console.log(id_home)
+
+    const query = `MATCH(h:house {id:$id_home}) DETACH DELETE h`;
+
+    const params = {
+      id_home: id_home,
+    }
+
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query, params);
+
+      return {
+        message: "Conexión lograda",
+        status: 200,
+        data: resultObj.records
+      };
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+
   }
 
 }

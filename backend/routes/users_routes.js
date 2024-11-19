@@ -3,6 +3,10 @@ var router = express.Router();
 const users_controllers = require("../controllers/users_controllers")
 
 
+//decodificar un token
+
+router.post("/decoded_token", users_controllers.decoded_token);
+
 //Registrar cualquier usuario
 
 router.post("/register", users_controllers.register_user);

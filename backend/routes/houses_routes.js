@@ -13,4 +13,7 @@ router.get("/see_your_houses", checkLoginPropietario, houses_controllers.search_
 
 router.post("/create_house", checkLoginPropietario, houses_controllers.create_house)
 
+//Borrar alguna casa
+router.delete("/delete_home/:index", checkLoginPropietario, houses_controllers.delete_home)
+
 module.exports = router;

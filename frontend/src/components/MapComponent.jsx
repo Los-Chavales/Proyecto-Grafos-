@@ -6,6 +6,8 @@ import L from 'leaflet';
 import houseIconUrl from '../assets/house-icon.png'; // Asegúrate de tener estos íconos
 import placeIconUrl from '../assets/place-icon.png';
 
+import Register_entity from './Register_entity_form';
+
 const houseIcon = new L.Icon({
   iconUrl: houseIconUrl,
   iconSize: [25, 25],
@@ -31,7 +33,10 @@ const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
 
     return selectedPosition ? (
       <Marker position={selectedPosition}>
-        <Popup>Coordenadas seleccionadas: {selectedPosition.join(', ')}</Popup>
+        <Popup>
+          Coordenadas seleccionadas: {selectedPosition.join(', ')}
+          <Register_entity newLocation={selectedPosition.join(', ')}/>
+        </Popup>
       </Marker>
     ) : null;
   };
