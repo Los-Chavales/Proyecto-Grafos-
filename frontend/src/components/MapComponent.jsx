@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import "../styles/popup_details.css"
 
 import L from 'leaflet';
 import houseIconUrl from '../assets/house-icon.png'; // Asegúrate de tener estos íconos
 import placeIconUrl from '../assets/place-icon.png';
 
 import Register_entity from './Register_entity_form';
+
+//NUEVO
+import Modal_confirm from './Modal_confirm';
+import { useAuth } from "../context/Auth_context";
 
 const houseIcon = new L.Icon({
   iconUrl: houseIconUrl,
@@ -21,7 +26,21 @@ const placeIcon = new L.Icon({
 const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
   const [selectedPosition, setSelectedPosition] = useState(null);
 
+  //NUEVO
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedIdEntity, setSelectedIdEntity] = useState("");
+  const [selectedEntity, setSelectedEntity] = useState("");
+  const { signin, user, userDecoded, isAuth, errorsServer, logout } = useAuth();
+
   // Componente para capturar clics en el mapa
+
+  const selectElements = (id, entity) => {
+    setIsModalOpen(true)
+    setSelectedIdEntity(id)
+    setSelectedEntity(entity)
+  }
+
+
   const LocationMarker = () => {
     useMapEvents({
       click(e) {
@@ -35,7 +54,7 @@ const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
       <Marker position={selectedPosition}>
         <Popup>
           Coordenadas seleccionadas: {selectedPosition.join(', ')}
-          <Register_entity newLocation={selectedPosition.join(', ')}/>
+          <Register_entity newLocation={selectedPosition.join(', ')} />
         </Popup>
       </Marker>
     ) : null;
@@ -55,14 +74,27 @@ const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
       {/* Marcadores de casas */}
       {houses.map((house, idx) => (
         <Marker key={idx} position={house.house_coords} icon={houseIcon}>
-          <Popup>{house.property_type}</Popup>
+          <Popup>
+            {/*  NUEVO */}
+            <div className='popup_container'>
+              <span>{house.property_type}</span>
+              <button onClick={() => selectElements(house.id, "house")} >Eliminar</button>
+            </div>
+
+          </Popup>
         </Marker>
       ))}
 
       {/* Marcadores de lugares */}
       {places.map((place, idx) => (
         <Marker key={idx} position={place.place_coords} icon={placeIcon}>
-          <Popup>{place.name_place}</Popup>
+          <Popup>
+            {/*  NUEVO */}
+            <div className='popup_container'>
+              <span>{place.name_place}</span>
+              <button onClick={() => selectElements(place.id, "place")} >Eliminar</button>
+            </div>
+          </Popup>
         </Marker>
       ))}
 
@@ -80,6 +112,14 @@ const MapComponent = ({ houses, places, distances, onPlaceSelect }) => {
 
       {/* Clic en el mapa para agregar nodos */}
       <LocationMarker onPlaceSelect={onPlaceSelect} />
+
+      {/*  NUEVO */}
+      <Modal_confirm
+        isOpen={isModalOpen}
+        closeModal={() => setIsModalOpen(false)}
+        id={selectedIdEntity}
+        entity={selectedEntity}
+      />
 
     </MapContainer>
   );
