@@ -50,8 +50,8 @@ function App() {
       const getPlaces = infoP.data;
       const getHouses = infoH.data;
       console.debug(getHouses, getPlaces)
-      //setPlaces(!Array.isArray(getPlaces) ? [] : getPlaces);
-      //setHouses(!Array.isArray(getHouses) ? [] : getHouses);
+      setPlaces(!Array.isArray(getPlaces) ? [] : getPlaces);
+      setHouses(!Array.isArray(getHouses) ? [] : getHouses);
     } catch (error) {
       console.error(error)
     }
@@ -168,22 +168,19 @@ function App() {
   };
 
   // Enviar rutas al backend
-  useEffect(() => {
-    const saveRoutes = async () => {
-      for (const route of routes) {
-        console.log(route)
-        await saveRouteToBackend({
-          house: route.house,
-          place: route.place,
-          distance: route.distance,
-          geometry: route.geometry,
-        });
-      }
-    };
+  const saveRoutes = async () => {
+    for (const route of routes) {
+      console.log(route)
+      await saveRouteToBackend({
+        house: route.house,
+        place: route.place,
+        distance: route.distance,
+        geometry: route.geometry,
+      });
+    }
+  };
 
-    if (routes.length > 0) saveRoutes();
-  }, [routes]);
-
+  
 
   return (
     <>
@@ -195,6 +192,7 @@ function App() {
             <div className='contenido'>
               <div className='map'>
                 <h1>Mapa de Rutas</h1>
+                <button onClick={saveRoutes}>Guardar ruta</button>
                 <MapComponent
                   houses={houses}
                   places={places}

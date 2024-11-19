@@ -1,11 +1,25 @@
 const houses_model = require("../models/houses_models");
 
+function acomodar(places) {
+  let lugares = places
+  for (const lugar of lugares) {
+    if(lugar.property_type) {
+      lugar.name = lugar.property_type
+    }
+    if(Array.isArray(lugar.house_coords)) {
+      lugar.lat = lugar.house_coords[0]
+      lugar.lng = lugar.house_coords[1]
+    }
+  }
+  return lugares
+}
+
 class Houses_Controllers {
   async search_all_houses(req, res) { // GET
     let result = await houses_model.search_all_houses()
     return res.status(result.status).json({
       message: result.message,
-      data: result.data
+      data: acomodar(result.data)
     });
   }
 

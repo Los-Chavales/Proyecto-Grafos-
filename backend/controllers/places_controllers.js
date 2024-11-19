@@ -1,12 +1,26 @@
 const places_model = require("../models/places_models");
 
+function acomodar(places) {
+  let lugares = places
+  for (const lugar of lugares) {
+    if(lugar.name_place) {
+      lugar.name = lugar.name_place
+    }
+    if(Array.isArray(lugar.place_coords)) {
+      lugar.lat = lugar.place_coords[0]
+      lugar.lng = lugar.place_coords[1]
+    }
+  }
+  return lugares
+}
+
 class Places_Controllers {
 
   async search_all_places(req, res) { // mostrar todos los lugares
     let result = await places_model.search_all_places()
     return res.status(result.status).json({
       message: result.message,
-      data: result.data
+      data: acomodar(result.data)
     });
   }
 
