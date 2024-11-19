@@ -70,7 +70,6 @@ function App() {
   // Enviar los datos al backend
   const saveToBackend = async (type, data) => {
     console.log('backeeeend',data);
-    console.log(import.meta.env.VITE_TOKEN_HOUSE)
     try {
       if (type === "house") {
         let response = await fetch(import.meta.env.VITE_API_URL + '/houses/create_house', {
@@ -89,9 +88,11 @@ function App() {
             name: Cookies.get().token
           })
         })
+        if (response.status != 200) return console.log(response.statusText)
         const infoH = await response.json();
+        //console.log('resultado',infoH)
         const getHouses = infoH.data;
-        console.debug(getHouses)
+        console.debug('data',getHouses)
       } else {
         let response = await fetch(import.meta.env.VITE_API_URL + '/places/create_place', {
           method: 'POST',
@@ -113,6 +114,7 @@ function App() {
       }
     } catch (error) {
       console.error(error)
+      console.log(error)
     }
   };
 
@@ -147,7 +149,7 @@ function App() {
         try {
           // Usa la API de OSRM para obtener la ruta más corta
           const response = await axios.get(
-            `http://router.project-osrm.org/route/v1/driving/${house.lng},${house.lat};${place.lng},${place.lat}`,
+            `http://router.project-osrm.org/route/v1/driving/${house.lng},${house.lat};${place.lng},${place.lat}?overview=full&geometries=geojson`,
             { params: { overview: 'full', geometries: 'geojson' } }
           );
           const route = response.data.routes[0];
@@ -174,7 +176,7 @@ function App() {
           house: route.house,
           place: route.place,
           distance: route.distance,
-          geometry: route.geometry.coordinates,
+          geometry: route.geometry,
         });
       }
     };
