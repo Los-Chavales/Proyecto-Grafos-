@@ -69,8 +69,9 @@ function App() {
 
   // Enviar los datos al backend
   const saveToBackend = async (type, data) => {
-    console.log('backeeeend',data);
-    try {
+    console.log('backeeeend');
+    getData()
+    /*try {
       if (type === "house") {
         let response = await fetch(import.meta.env.VITE_API_URL + '/houses/create_house', {
           method: 'POST',
@@ -115,7 +116,7 @@ function App() {
     } catch (error) {
       console.error(error)
       console.log(error)
-    } 
+    } */
   };
 
   const saveRouteToBackend = async (route) => {
@@ -192,7 +193,7 @@ function App() {
             <div className='contenido'>
               <div className='map'>
                 <h1>Mapa de Rutas</h1>
-                <button onClick={saveRoutes}>Guardar ruta</button>
+                <button onClick={saveRoutes}>Trazar ruta</button>
                 <MapComponent
                   houses={houses}
                   places={places}
@@ -208,9 +209,7 @@ function App() {
               </div>
             </div>
             <Footer />
-            <button onClick={saveToBackend}>Guardar Lugar</button>
-            <button onClick={saveToBackend}>Guardar Casa</button>
-
+            <button onClick={saveToBackend}>Recargar</button>
           </HouseProvider>
         </PlaceProvider>
       </AuthProvider>

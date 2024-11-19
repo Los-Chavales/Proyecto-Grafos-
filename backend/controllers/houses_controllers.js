@@ -2,6 +2,7 @@ const houses_model = require("../models/houses_models");
 
 function acomodar(places) {
   let lugares = places
+  if (!Array.isArray(lugares)) return places;
   for (const lugar of lugares) {
     if(lugar.property_type) {
       lugar.name = lugar.property_type
