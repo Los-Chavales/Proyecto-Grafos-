@@ -147,6 +147,41 @@ class Houses_Models {
     } 
   }
 
+  async delete_home(id_home) { //Eliminar una casa
+
+    console.log("DELETE:")
+
+    console.log(id_home)
+
+    const query = `MATCH(h:house {id:$id_home}) DETACH DELETE h`;
+
+    const params = {
+      id_home: id_home,
+    }
+
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query, params);
+
+      return {
+        message: "Conexión lograda",
+        status: 200,
+        data: resultObj.records
+      };
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+
+  }
+
 }
 
 module.exports = new Houses_Models();

@@ -12,11 +12,11 @@ class Places_Models {
 
     try {
       places_nodes = await session.run('MATCH(p:place) RETURN p', {});
-      if(places_nodes.records.length > 0){
+      if (places_nodes.records.length > 0) {
 
         let places = [];
 
-        for (let i = 0; i < places_nodes.records.length ; i++) {
+        for (let i = 0; i < places_nodes.records.length; i++) {
           places.push(places_nodes.records[i].get(0).properties)
         }
 
@@ -25,7 +25,7 @@ class Places_Models {
           status: 200,
           data: places
         };
-      }else{
+      } else {
         return {
           message: "Conexión lograda",
           status: 404,
@@ -60,7 +60,7 @@ class Places_Models {
 
       places_nodes = await session.run(query, params);
 
-      if(places_nodes.records.length > 0){
+      if (places_nodes.records.length > 0) {
 
         let houses = [];
 
@@ -73,7 +73,7 @@ class Places_Models {
           status: 200,
           data: houses
         };
-      }else{
+      } else {
         return {
           message: "Conexión lograda",
           status: 404,
@@ -91,8 +91,8 @@ class Places_Models {
     }
   }
 
-  async create_place(new_place){ //Crear un lugar
-    
+  async create_place(new_place) { //Crear un lugar
+
     const query = `
     MATCH (u:user) 
     WHERE u.name = $name   
@@ -102,11 +102,7 @@ class Places_Models {
       name_place:$name_place,
       place_coords: $place_coords
     })  
-    RETURN p`;//quité: u,d
-
-    //Decodificar el token para saber quién lo esta registrando
-
-    //let decodedToken = decodificar(new_place.token)
+    RETURN p`;
 
     const params = {
       name: new_place.name,
@@ -138,7 +134,42 @@ class Places_Models {
         status: 500,
         data: err
       };
-    } 
+    }
+
+  }
+
+  async delete_place(id_place) { //Eliminar un lugar
+
+    console.log("DELETE:")
+
+    console.log(id_place)
+
+    const query = `MATCH(p:place {id:$id_place}) DETACH DELETE p`;
+
+    const params = {
+      id_place: id_place,
+    }
+
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query, params);
+
+      return {
+        message: "Conexión lograda",
+        status: 200,
+        data: resultObj.records
+      };
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
 
   }
 

@@ -24,6 +24,14 @@ class Houses_Controllers {
       data: result.data
     });
   }
+
+  async delete_home(req, res){
+    let result = await houses_model.delete_home(req.params.index)
+    return res.status(result.status).json({
+      message: result.message,
+      data: result.data
+    });
+  }
 }
 
 module.exports = new Houses_Controllers();
