@@ -29,7 +29,7 @@ function App() {
   const [houses, setHouses] = useState([]); // Casas existentes
   const [routes, setRoutes] = useState([]);
   const [selectedHouse, setSelectedHouse] = useState(null);
-
+  const [distanceData, setDistanceData] = useState([])
   //Para obtener los lugares de la DB
   const getData = async () => {
     try {
@@ -55,6 +55,41 @@ function App() {
     } catch (error) {
       console.error(error)
     }
+    /*try {
+      const responseS = await fetch(import.meta.env.VITE_API_URL + '/routes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:
+          [
+            {
+              "id_house": "6b31a3da-50bf-47e1-acb7-da41d9e6c690"
+            },
+            {
+              "id_house": "f1ed5892-ec34-4f32-b264-6b7030e99283"
+            }
+          ]
+      })
+
+      const infoS = await responseS.json();
+      const getHouseS = infoS.data;
+      setDistanceData[getHouseS]
+    } catch (error) {
+      console.error(error)
+    }
+    */
+    let datos = [
+      {
+        id_house: 'Edificio',
+        distance: 6,
+      },
+      {
+        id_house: 'Casa',
+        distance: 4.82,
+      },
+    ]
+    setDistanceData(datos)
   }
   useEffect(() => {
     getData()
@@ -181,7 +216,7 @@ function App() {
     }
   };
 
-  
+
 
   return (
     <>
@@ -190,6 +225,7 @@ function App() {
           <HouseProvider>
 
             <Header />
+
             <div className='contenido'>
               <div className='map'>
                 <h1>Mapa de Rutas</h1>
@@ -204,10 +240,30 @@ function App() {
                   selectedHouse={selectedHouse}
                   setSelectedHouse={setSelectedHouse}
                 />
+
               </div>
+
+            </div>
+            <button onClick={saveToBackend}>Recargar</button>
+            <div style={{ marginBottom: "20px" }}>
+              {/* Mostrar lista de casas ordenadas por distancia */}
+              <h3>Casas por distancia total:</h3>
+              <ul>
+                {distanceData.map((item, index) => (
+                  <li
+                    key={item.id_house}
+                    style={{
+                      fontWeight: index === 0 ? "bold" : "normal", // Resaltar la casa con menor distancia
+                      color: index === 0 ? "green" : "black", // Color opcional para destacar
+                    }}
+                  >
+                    {item.id_house}: {item.distance.toFixed(2)} km
+                  </li>
+                ))}
+              </ul>
             </div>
             <Footer />
-            <button onClick={saveToBackend}>Recargar</button>
+
           </HouseProvider>
         </PlaceProvider>
       </AuthProvider>
