@@ -26,6 +26,7 @@ export const PlaceProvider = ({ children }) => {
 
     async function register_place(dataForm, token) {
         console.log(dataForm)
+        console.log("se va un lugar")
         try {
             const RESPONSE = await API_SERVER_PLACES.post("/create_place", dataForm, {
                 headers: {

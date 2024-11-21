@@ -26,6 +26,7 @@ export const HouseProvider = ({ children }) => {
 
     async function register_house(dataForm, token) {
         console.log(dataForm)
+        console.log("se va una casa")
         try {
             const RESPONSE = await API_SERVER_HOUSES.post("/create_house", dataForm, {
                     headers: {
