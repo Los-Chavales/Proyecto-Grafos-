@@ -25,8 +25,6 @@ export const HouseProvider = ({ children }) => {
       }, [errorsServer]);
 
     async function register_house(dataForm, token) {
-        console.log(dataForm)
-        console.log("se va una casa")
         try {
             const RESPONSE = await API_SERVER_HOUSES.post("/create_house", dataForm, {
                     headers: {
@@ -36,14 +34,10 @@ export const HouseProvider = ({ children }) => {
                 }
             );
 
-            //console.debug(RESPONSE);
-
             if (RESPONSE.status != 200) {
                 return console.log(RESPONSE.response.data);
             }
 
-            console.log("lo logro señor?")
-            console.log(RESPONSE.data);
             setHouse(RESPONSE.data)
             setMensage(true)
 

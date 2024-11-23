@@ -25,8 +25,7 @@ export const PlaceProvider = ({ children }) => {
       }, [errorsServer]);
 
     async function register_place(dataForm, token) {
-        console.log(dataForm)
-        console.log("se va un lugar")
+
         try {
             const RESPONSE = await API_SERVER_PLACES.post("/create_place", dataForm, {
                 headers: {
@@ -36,14 +35,10 @@ export const PlaceProvider = ({ children }) => {
               }
             );
 
-            //console.debug(RESPONSE);
-
             if (RESPONSE.status != 200) {
                 return console.log(RESPONSE.response.data);
             }
 
-            console.log("lo logro señor?")
-            console.log(RESPONSE.data);
             setPlace(RESPONSE.data)
             setMensage(true)
 

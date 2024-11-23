@@ -7,9 +7,8 @@ import Header from './components/Header';
 import { AuthProvider } from './context/Auth_context';
 import { PlaceProvider } from './context/Place_context';
 import { HouseProvider } from './context/House_context';
+import { useGET } from './context/Get_context';
 import axios from 'axios';
-//const { signin, user, userDecoded, isAuth, errorsServer } = AuthProvider();
-import Cookies from "js-cookie";
 
 //Página 404
 
@@ -25,13 +24,18 @@ const NotFound = () => {
 };
 
 function App() {
-  const [places, setPlaces] = useState([]); // Lugares existentes
-  const [houses, setHouses] = useState([]); // Casas existentes
+  //const [places, setPlaces] = useState([]); // Lugares existentes
+  //const [houses, setHouses] = useState([]); // Casas existentes
+
   const [routes, setRoutes] = useState([]);
   const [selectedHouse, setSelectedHouse] = useState(null);
-  const [distanceData, setDistanceData] = useState([])
+
+  const { places, houses, distanceData, getData } = useGET();
+
+  //const [distanceData, setDistanceData] = useState([])
+  
   //Para obtener los lugares de la DB
-  const getData = async () => {
+/*   const getData = async () => {
     try {
       const responseH = await fetch(import.meta.env.VITE_API_URL + '/houses', {
         method: 'GET',
@@ -54,7 +58,7 @@ function App() {
       setHouses(!Array.isArray(getHouses) ? [] : getHouses);
     } catch (error) {
       console.error(error)
-    }
+    } */
     /*try {
       const responseS = await fetch(import.meta.env.VITE_API_URL + '/routes', {
         method: 'POST',
@@ -79,7 +83,7 @@ function App() {
       console.error(error)
     }
     */
-    let datos = [
+   /*  let datos = [
       {
         id_house: 'Edificio',
         distance: 6,
@@ -91,6 +95,10 @@ function App() {
     ]
     setDistanceData(datos)
   }
+  useEffect(() => {
+    getData()
+  }, []) */
+
   useEffect(() => {
     getData()
   }, [])
@@ -105,7 +113,7 @@ function App() {
   // Enviar los datos al backend
   const saveToBackend = async (type, data) => {
     console.log('backeeeend');
-    getData()
+    //getData()
     /*try {
       if (type === "house") {
         let response = await fetch(import.meta.env.VITE_API_URL + '/houses/create_house', {
@@ -166,14 +174,14 @@ function App() {
   // Modificar la función para guardar casas
   const addHouse = async (house) => {
     const newHouse = house;
-    setHouses([...houses, newHouse]);
+    //setHouses([...houses, newHouse]);
     await saveToBackend("house", newHouse);
   };
 
   // Modificar la función para guardar lugares
   const addPlace = async (place) => {
     const newPlace = place;
-    setPlaces([...places, newPlace]);
+    //setPlaces([...places, newPlace]);
     await saveToBackend("place", newPlace);
   };
 
@@ -223,6 +231,7 @@ function App() {
       <AuthProvider>
         <PlaceProvider>
           <HouseProvider>
+      {/*       <GETProvider> */}
 
             <Header />
 
@@ -264,6 +273,7 @@ function App() {
             </div>
             <Footer />
 
+   {/*          </GETProvider> */}
           </HouseProvider>
         </PlaceProvider>
       </AuthProvider>

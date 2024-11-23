@@ -4,6 +4,7 @@ import "../styles/register_entity.css";
 import { useAuth } from "../context/Auth_context";
 import { usePlace } from "../context/Place_context";
 import { useHouse } from "../context/House_context";
+import { useGET } from '../context/Get_context';
 import Cookies from "js-cookie";
 
 const Register_entity = (newLocation) => {
@@ -11,6 +12,7 @@ const Register_entity = (newLocation) => {
   const { user, userDecoded } = useAuth();
   const { register_place } = usePlace();
   const { register_house } = useHouse();
+  const { getData } = useGET();
 
   const onSubmit = (data) => { 
 
@@ -18,12 +20,6 @@ const Register_entity = (newLocation) => {
 
     if(userDecoded && userDecoded.data.rol == "propietario"){
 
- /*      let result = newLocation.newLocation.split(",")
-  
-      for (let i = 0; i < result.length; i++) {
-        result[i] = Number(result[i].trim());
-      }
- */
       formData = {
         name: Cookies.get().token,
         price: data.price,
@@ -35,6 +31,7 @@ const Register_entity = (newLocation) => {
       }
 
       register_house(formData, Cookies.get().token)
+      getData(); 
 
     } else if (userDecoded && userDecoded.data.rol == "cliente"){
   
@@ -43,12 +40,12 @@ const Register_entity = (newLocation) => {
         name_place:data.name_place,
         place_coords: [newLocation.newLocation.lat, newLocation.newLocation.lng]
       }
-/* 
-      console.log("Va saliendo")
-      console.log(formData) */
   
-      register_place(formData, Cookies.get().token)  
+      register_place(formData, Cookies.get().token) 
+      getData(); 
     }
+
+    getData(); 
   };
 
   if (userDecoded && userDecoded.data.rol == "propietario") {
@@ -106,18 +103,6 @@ const Register_entity = (newLocation) => {
 
             </div>
 
-            {/* Escoger que tipo de registro se va a hacer */}
-            {/* <div>
-              <label htmlFor="location-type">Tipo</label>
-              <div>
-                <input className='form_input' type='radio' name='rol' value={"cliente"}
-                />Casa
-  
-                <input className='form_input' type='radio' name='rol' value={"propietario"}
-                />Lugar
-              </div>
-            </div> */}
-
           </div>
           <div className="container_submit_button">
             <button className="submit_button" >Agregar</button>
@@ -128,7 +113,7 @@ const Register_entity = (newLocation) => {
   } else if (userDecoded && userDecoded.data.rol == "cliente") {
     return (
       <div className="mb-4">
-        {/*  Para el form de las casas */}
+        {/*  Para el form de los lugares */}
         <div>
           <h2>Agregar nueva ubicación</h2>
         </div>
