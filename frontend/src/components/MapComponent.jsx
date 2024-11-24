@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '../styles/Map.css';
 import Register_entity from './Register_entity_form';
 
 // Iconos personalizados
@@ -56,13 +57,13 @@ const MapComponent = ({
 
   return (
     <div>
-      <select
+      <select className='rutesOp'
         value={selectedHouse ? selectedHouse.name : ''}
         onChange={(e) =>
           setSelectedHouse(houses.find((house) => house.name === e.target.value) || null)
         }
       >
-        <option value="">Selecciona una casa</option>
+        <option value=""  >Selecciona una casa</option>
         {houses.map((house, idx) => (
           <option key={idx} value={house.name}>
             {house.name}
