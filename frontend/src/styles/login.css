@@ -11,8 +11,18 @@
   align-items: center;
 }
 
+h2{
+  font-family: "Parkinsans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 1px 1px 10px #000;
+}
+
 .login_container{
-  background-color: #fff;
+  background-color: #6EC6CA;
   width: 350px;
   border-radius: 10px;
   padding: 30px;
@@ -30,11 +40,14 @@
   font-weight: bold;
   width: 25px;
   padding: 3px;
+  background-color: #a00000c4;
+  border-radius: 6px;
+  color: #fff;
 }
 
 .login_close:hover{
   cursor: pointer;
-  background-color: #dadada;
+  background-color: #d30101c4;
   border-radius: 5px;
 }
 
@@ -48,9 +61,11 @@
 .login_form_input{
   padding: 20px;
   margin: 10px;
-  border: #000 solid 2px;
+  border: none;
   border-radius: 5px;
   font-size: 15px;
+  font-family: "Parkinsans", sans-serif;
+  
 }
 
 
@@ -64,13 +79,23 @@
 }
 
 .--submit:hover{
-  cursor: pointer;
-  background-color: #dadada;
+    background-color: #366091 ;
+    color: #fff;
+    transition: .2s ;
 }
 
 .p-input-user {
   color: #A00000;
   height: 20px;
+  margin-left: 20px;
+  font-family: "Parkinsans", sans-serif;
+  font-size: 13px;
+
+}
+
+.radio_input{
+  font-family: "Parkinsans", sans-serif;
+
 }
 
 .p-error-user {
@@ -80,13 +105,9 @@
   border-radius: 20px;
 }
 
-.container_tittle{
-  padding: 50px 0;
-}
 
 .tittle_welcome{
-  font-size: 40px;
-  text-align: center;
+  font-size: 30px;
 }
 
 .welcome_color{

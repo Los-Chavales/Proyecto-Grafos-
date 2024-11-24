@@ -237,23 +237,7 @@ function App() {
 
             <div className='contenido'>
               <div className='map'>
-                <h1>Mapa de Rutas</h1>
-                <button onClick={saveRoutes}>Trazar ruta</button>
-                <MapComponent
-                  houses={houses}
-                  places={places}
-                  routes={routes}
-                  onAddHouse={addHouse}
-                  onAddPlace={addPlace}
-                  fetchAndDisplayRoutes={fetchAndDisplayRoutes}
-                  selectedHouse={selectedHouse}
-                  setSelectedHouse={setSelectedHouse}
-                />
-
-              </div>
-
-            </div>
-            <button onClick={saveToBackend}>Recargar</button>
+                <h1 className='title'>Mapa de Rutas</h1>
             <div style={{ marginBottom: "20px" }}>
               {/* Mostrar lista de casas ordenadas por distancia */}
               <h3>Casas por distancia total:</h3>
@@ -271,6 +255,26 @@ function App() {
                 ))}
               </ul>
             </div>
+
+            <button onClick={saveToBackend} className='rutes'>Recargar</button>
+
+                <button className='rutes' onClick={saveRoutes}>Trazar ruta</button>
+                
+                
+
+              </div>
+              <MapComponent
+                  houses={houses}
+                  places={places}
+                  routes={routes}
+                  onAddHouse={addHouse}
+                  onAddPlace={addPlace}
+                  fetchAndDisplayRoutes={fetchAndDisplayRoutes}
+                  selectedHouse={selectedHouse}
+                  setSelectedHouse={setSelectedHouse}
+                />
+            </div>
+           
             <Footer />
 
    {/*          </GETProvider> */}

@@ -4,33 +4,42 @@
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
-    width: 100%;
+    width: auto;
     height: 70px;
+    padding: 5px;
+    margin-bottom: 10px;
+    font-family: "Parkinsans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
 
 .button{
-    padding: 3px 2px;
     font-size: 13px;
     align-items: center;
     margin-right: 12px;
-    background-color: #FFFFFF ;
-    border-radius: 10px;
+    background-color: #ffffff ;
+    border-radius: 5px;
+    border: none;
     height: 38px;
     width: 90px;
     font-family: Poppins;
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
+    font-family: "Parkinsans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.button:hover{
+    background-color: #366091 ;
+    color: #fff;
+    transition: .2s ;
 }
 
 .logo-header {
-    height: 85px;
-    padding-top: 9px;
-    padding-bottom: 2px;
-}
-
-.div-logo {
-    margin-left: 1px;
+    height: 70px;
+    margin-left: 20px;
 }
 
 

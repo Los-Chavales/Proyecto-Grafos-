@@ -35,19 +35,18 @@ const Login = ({ isOpen_login, closeModal_login }) => {
         </div>
 
         <form className='login_container_form' onSubmit={handleSubmit(onSubmit)}>
-          <h2>Iniciar</h2>
-          <input className='login_form_input' type='text' name='name' placeholder='nombre' 
+          <h2>Iniciar Sesión</h2>
+          <input className='login_form_input' type='text' name='name' placeholder='Ingrese Usuario...' 
             {...register("name", { required: true })}
           />
-          {errors.name && (<p className="p-input-user">Se requiere el nombre</p>)}
+          {errors.name && (<p className="p-input-user">Se requiere el nombre/usuario</p>)}
 
-          <input className='login_form_input' type='password' name='password' placeholder='contraseña'
+          <input className='login_form_input' type='password' name='password' placeholder='Ingrese Contraseña...'
             {...register("password", { required: true })}
           />
           {errors.password && (<p className="p-input-user">Se requiere una contraseña</p>)}
 
-          <input className='login_form_input --submit' type='submit'></input>
-
+          <input className='login_form_input --submit' type='submit' value="Entrar"></input>
           {//Mostrar errores
             errorsServer.map((error, i) => (
               <div className="p-error-user" key={i}>

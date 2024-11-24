@@ -28,34 +28,34 @@ const Register = ({ isOpen, closeModal }) => {
 
         <form className='login_container_form' onSubmit={handleSubmit(onSubmit)}> 
           <h2>Regístrate</h2>
-          <input className='login_form_input' type='text' name='name' placeholder='nombre' 
+          <input className='login_form_input' type='text' name='name' placeholder='Nombre...' 
             {...register("name", { required: true })}
           />
           {errors.name && (<p className="p-input-user">Se requiere el nombre</p>)}
 
-          <input className='login_form_input' type='password' name='password' placeholder='contraseña'
+          <input className='login_form_input' type='password' name='password' placeholder='Contraseña...'
             {...register("password", { required: true })}
           />
           {errors.password && (<p className="p-input-user">Se requiere una contraseña</p>)}
 
-          <input className='login_form_input' type='text' name='phone' placeholder='teléfono'
+          <input className='login_form_input' type='text' name='phone' placeholder='Teléfono...'
             {...register("phone", { required: true })}
           />
-          {errors.password && (<p className="p-input-user">Se requiere una contraseña</p>)}
+          {errors.password && (<p className="p-input-user">Se requiere teléfono</p>)}
 
-          <div>
-            <input className='login_form_input' type='radio' name='rol' value={"cliente"}
+          <div className='radio_input'>
+            <input className='login_form_input radio' type='radio' name='rol' value={"cliente"}
               {...register("rol", { required: true })}
             />Cliente
 
-            <input className='login_form_input' type='radio' name='rol' value={"propietario"}
+            <input className='login_form_input radio' type='radio' name='rol' value={"propietario"}
               {...register("rol", { required: true })}
             />Propietario
             {errors.rol && (<p className="p-input-user">Se requiere el rol</p>)}
           </div>
 
 
-          <input className='login_form_input --submit' type='submit'></input>
+          <input className='login_form_input --submit' type='submit' value="Registrarse"></input>
         </form>
       </div>
     </div>
