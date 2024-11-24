@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { API_SERVER_HOUSES } from "../utils/api/conexion_server.js";
 import { API_SERVER_PLACES } from "../utils/api/conexion_server.js";
+import { API_SERVER_ROUTES } from "../utils/api/conexion_server.js";
 
 export const GETContext = createContext();
 
@@ -41,7 +42,7 @@ export const GETProvider = ({ children }) => {
       console.error(error)
     }
 
-    let datos = [
+ /*    let datos = [
       {
         id_house: 'Edificio',
         distance: 6,
@@ -51,8 +52,37 @@ export const GETProvider = ({ children }) => {
         distance: 4.82,
       },
     ]
-    setDistanceData(datos)
+    setDistanceData(datos) */
   }
+
+    //Para obtener las distancias de la DB
+    async function getWinningHouse() {
+      try {
+        const responseR = await API_SERVER_ROUTES.get("/winning_house", {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+        );
+  
+        const getRoutes = responseR.data.data;
+
+        let datos = []
+
+        for (let i = 0; i < getRoutes.length; i++) {
+          datos.push({
+            id_house: getRoutes[i].house_name,
+            distance: getRoutes[i].total_distance
+          })
+        }
+        
+        setDistanceData(datos)
+  
+      } catch (error) {
+        console.error(error)
+      }
+  
+    }
 
   return (
     <GETContext.Provider
@@ -60,7 +90,8 @@ export const GETProvider = ({ children }) => {
         places,
         houses,
         distanceData,
-        getData
+        getData,
+        getWinningHouse
       }}
     >
       {children}

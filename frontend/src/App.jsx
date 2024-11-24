@@ -30,7 +30,7 @@ function App() {
   const [routes, setRoutes] = useState([]);
   const [selectedHouse, setSelectedHouse] = useState(null);
 
-  const { places, houses, distanceData, getData } = useGET();
+  const { places, houses, distanceData, getData, getWinningHouse } = useGET();
 
   //const [distanceData, setDistanceData] = useState([])
   
@@ -101,6 +101,7 @@ function App() {
 
   useEffect(() => {
     getData()
+    getWinningHouse()
   }, [])
 
 
