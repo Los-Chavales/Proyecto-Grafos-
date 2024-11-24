@@ -2,6 +2,14 @@ const routes_model = require("../models/routes_models");
 
 class Routes_Controllers {
 
+  async winning_house(req, res){
+    let result = await routes_model.winning_house()
+    return res.status(result.status).json({
+      message: result.message,
+      data: result.data
+    });
+  }
+
   async see_all_relationships(req, res) { //Ver las relaciones
     console.log("Va llegando")
     console.log(req.body)

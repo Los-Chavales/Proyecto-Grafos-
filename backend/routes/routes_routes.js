@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const router_controllers = require("../controllers/routes_controllers");
 
+//Ver la mejor casa
+router.get("/winning_house", router_controllers.winning_house)
+
 //Ver todas las relaciones
 router.post("/", router_controllers.see_all_relationships)
 
