@@ -303,11 +303,10 @@ class Router_Models {
 
 
   async create_route(route) { //Crear relación
-    console.log("Allá va")
-    console.log(route)
-
-
-    let routeFound = await this.check_relationship_byname(route.house.name, route.place.place) //Verificar que no exista una relación ya registrada
+/*     console.log("Allá va")
+    console.log(route) */
+    
+    let routeFound = await this.check_relationship_byname(route.house.name, route.place.name) //Verificar que no exista una relación ya registrada
 
     if (routeFound.status == 200) {
       return {
@@ -327,7 +326,7 @@ class Router_Models {
 
     const params = {
       property_type: route.house.name,
-      name_place: route.place.place,
+      name_place: route.place.name,
       distance: route.distance,
       geometry: route.geometry,
     };
@@ -353,7 +352,7 @@ class Router_Models {
         status: 500,
         data: err
       };
-    }
+    } 
 
   }
 }
