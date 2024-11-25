@@ -114,55 +114,9 @@ function App() {
   };*/
 
   // Enviar los datos al backend
-  const saveToBackend = async (type, data) => {
-    console.log('backeeeend');
-    //getData()
-    /*try {
-      if (type === "house") {
-        let response = await fetch(import.meta.env.VITE_API_URL + '/houses/create_house', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Cookies.get().token}`
-          },
-          body: JSON.stringify({
-            price: 300,
-            construction_materials: "acero",
-            size: 270,
-            rooms: 2,
-            property_type: data.name,
-            house_coords: [data.lat, data.lng],
-            name: Cookies.get().token
-          })
-        })
-        if (response.status != 200) return console.log(response.statusText)
-        const infoH = await response.json();
-        //console.log('resultado',infoH)
-        const getHouses = infoH.data;
-        console.debug('data',getHouses)
-      } else {
-        let response = await fetch(import.meta.env.VITE_API_URL + '/places/create_place', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Cookies.get().token}`
-          },
-          body: JSON.stringify({
-            //id: `place-${Date.now()}`, // ID único
-            name_place: data.name, // Personaliza según tu flujo
-            place_coords: [data.lat, data.lng],
-            //type: 'place',
-            name: Cookies.get().token
-          }),
-        })
-        const infoP = await response.json();
-        const gePlaces = infoP.data;
-        console.debug(gePlaces) 
-      }
-    } catch (error) {
-      console.error(error)
-      console.log(error)
-    }*/
+  const recharge_page = async () => {
+    getData()
+    getWinningHouse()
   };
 
   const saveRouteToBackend = async (route) => {
@@ -205,20 +159,6 @@ function App() {
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify(data),
        });  */
-  };
-
-  // Modificar la función para guardar casas
-  const addHouse = async (house) => {
-    const newHouse = house;
-    //setHouses([...houses, newHouse]);
-    await saveToBackend("house", newHouse);
-  };
-
-  // Modificar la función para guardar lugares
-  const addPlace = async (place) => {
-    const newPlace = place;
-    //setPlaces([...places, newPlace]);
-    await saveToBackend("place", newPlace);
   };
 
   //Calcular rutas
@@ -267,7 +207,6 @@ function App() {
       <AuthProvider>
         <PlaceProvider>
           <HouseProvider>
-            {/*       <GETProvider> */}
 
             <Header />
 
@@ -292,7 +231,7 @@ function App() {
                   </ul>
                 </div>
 
-                <button onClick={saveToBackend} className='rutes'>Recargar</button>
+                <button onClick={recharge_page} className='rutes'>Recargar</button>
 
                 <button className='rutes' onClick={saveRoutes}>Trazar ruta</button>
 
@@ -303,8 +242,6 @@ function App() {
                 houses={houses}
                 places={places}
                 routes={routes}
-                onAddHouse={addHouse}
-                onAddPlace={addPlace}
                 fetchAndDisplayRoutes={fetchAndDisplayRoutes}
                 selectedHouse={selectedHouse}
                 setSelectedHouse={setSelectedHouse}
@@ -313,7 +250,6 @@ function App() {
 
             <Footer />
 
-            {/*          </GETProvider> */}
           </HouseProvider>
         </PlaceProvider>
       </AuthProvider>
