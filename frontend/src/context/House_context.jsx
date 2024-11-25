@@ -21,27 +21,30 @@ export const HouseProvider = ({ children }) => {
 
     useEffect(() => {
         if (errorsServer.length > 0) {
-          const timer = setTimeout(() => {
-            setErrorsServer([]);
-          }, 5000);
-          return () => clearTimeout(timer);
+            const timer = setTimeout(() => {
+                setErrorsServer([]);
+            }, 5000);
+            return () => clearTimeout(timer);
         }
-      }, [errorsServer]);
+    }, [errorsServer]);
 
     async function register_house(dataForm, token) {
         try {
             const RESPONSE = await API_SERVER_HOUSES.post("/create_house", dataForm, {
-                    headers: {
+                headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                    }
                 }
+            }
             );
 
             if (RESPONSE.status != 200) {
                 return console.log(RESPONSE.response.data);
             }
-            document.querySelector('.form_input').value = '';
+            //Para borrar todos los inputs
+            for (let input of document.querySelectorAll('.form_input')) {
+                input.value = ''
+            }
             document.querySelector('.leaflet-popup-close-button').click();
             setHouse(RESPONSE.data);
             setMensage(true);
@@ -49,7 +52,7 @@ export const HouseProvider = ({ children }) => {
             getData()
         } catch (error) {
             let menError = error.response.data;
-            if(menError.message == "Ya existe una casa con ese nombre"){
+            if (menError.message == "Ya existe una casa con ese nombre") {
                 alert("Ya existe una casa con ese nombre")
             }
             if (error.response && error.response.data && error.response.data.message) menError = error.response.data.message;

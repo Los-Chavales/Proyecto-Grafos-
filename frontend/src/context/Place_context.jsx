@@ -39,10 +39,8 @@ export const PlaceProvider = ({ children }) => {
             if (RESPONSE.status != 200) {
                 return console.log(RESPONSE.response.data);
             }
-            //Para borrar todos los inputs
-            for (let input of document.querySelectorAll('.form_input')) {
-                input.value = ''
-            }
+    
+            document.querySelector('.form_input').value = '';
             document.querySelector('.leaflet-popup-close-button').click();//Cerrar la popup
             setPlace(RESPONSE.data);
             setMensage(true);
