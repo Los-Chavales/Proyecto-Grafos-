@@ -29,24 +29,12 @@ const MapComponent = ({
   houses,
   places,
   routes,
-  onAddHouse,
-  onAddPlace,
   fetchAndDisplayRoutes,
   selectedHouse,
   setSelectedHouse,
 }) => {
   const [tempMarker, setTempMarker] = useState(null);
   const [tempName, setTempName] = useState('');
-
-  const handleAddLocation = (type) => {
-    if (type === 'house') {
-      onAddHouse({ ...tempMarker, name: tempName });
-    } else if (type === 'place') {
-      onAddPlace({ ...tempMarker, name: tempName });
-    }
-    setTempMarker(null);
-    setTempName('');
-  };
 
   useEffect(() => {
     if (selectedHouse && places.length > 0) {
