@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { API_SERVER_HOUSES } from "../utils/api/conexion_server.js";
+import { useGET } from './Get_context.jsx';
 
 export const HouseContext = createContext();
 
@@ -10,6 +11,9 @@ export const useHouse = () => {
 };
 
 export const HouseProvider = ({ children }) => {
+
+    const { getData } = useGET();
+
     const [house, setHouse] = useState(null);
     const [mensage, setMensage] = useState(false);
     const [errorsServer, setErrorsServer] = useState([]);
@@ -42,14 +46,18 @@ export const HouseProvider = ({ children }) => {
             setHouse(RESPONSE.data);
             setMensage(true);
             alert('Registro exitoso');
-
+            getData()
         } catch (error) {
-            let menError = error.message;
+            let menError = error.response.data;
+            if(menError.message == "Ya existe una casa con ese nombre"){
+                alert("Ya existe una casa con ese nombre")
+            }
             if (error.response && error.response.data && error.response.data.message) menError = error.response.data.message;
             if (!menError) menError = "Error";
             console.error('Error al registrar la casa:', menError);
             console.debug(menError);
             setErrorsServer([menError]);
+            getData()
             return error;
         }
     }

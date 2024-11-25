@@ -103,9 +103,65 @@ class Houses_Models {
     }
   }
 
+  async check_house_byname(property_type) { //Verificar la relación por nombre
+
+    const query = `
+      MATCH
+      (h:house {property_type:$property_type})
+      RETURN h
+    `;
+
+    const params = {
+      property_type: property_type,
+    };
+
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query, params);
+
+
+      if (resultObj.records.length > 0) {
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: resultObj.records[0].get(0).properties
+        };
+      } else {
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
+
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+
+  }
+
+
   async create_house(new_house){ //Crear una casa
 
     //Decodificar el token para ver quién registro la casa
+
+    let houseFound = await this.check_house_byname(new_house.property_type) //Verificar que no exista una casa ya registrada
+
+    if (houseFound.status == 200) {
+      return {
+        message: "Ya existe una casa con ese nombre",
+        status: 500,
+        data: new_house
+      };
+    }
 
     let decodedToken = decodificar(new_house.name)
 

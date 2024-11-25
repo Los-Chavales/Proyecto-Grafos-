@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { API_SERVER_PLACES } from "../utils/api/conexion_server.js";
+import { useGET } from './Get_context.jsx';
 
 export const PlaceContext = createContext();
 
@@ -43,14 +44,19 @@ export const PlaceProvider = ({ children }) => {
             setPlace(RESPONSE.data);
             setMensage(true);
             alert('Registro exitoso');
+            getData()
 
         } catch (error) {
-            let menError = error.message;
+            let menError = error.response.data;
+            if(menError.message == "Ya existe un lugar con ese nombre"){
+                alert("Ya existe un lugar con ese nombre")
+            }
             if (error.response && error.response.data && error.response.data.message) menError = error.response.data.message;
             if (!menError) menError = "Error";
             console.error('Error al registrar el lugar:', menError);
             console.debug(menError);
             setErrorsServer([menError]);
+            getData()
             return error;
         }
     }

@@ -91,7 +91,62 @@ class Places_Models {
     }
   }
 
+  async check_place_byname(name_place) { //Verificar la relación por nombre
+
+    const query = `
+      MATCH
+      (p:place {name_place:$name_place})
+      RETURN p
+    `;
+
+    const params = {
+      name_place: name_place,
+    };
+
+    let session = driver.session();
+    let resultObj;
+
+    try {
+      resultObj = await session.run(query, params);
+
+
+      if (resultObj.records.length > 0) {
+        return {
+          message: "Conexión lograda",
+          status: 200,
+          data: resultObj.records[0].get(0).properties
+        };
+      } else {
+        return {
+          message: "Conexión lograda",
+          status: 404,
+          data: "sin resultados"
+        };
+      }
+
+    }
+    catch (err) {
+      console.error(err);
+      return {
+        message: "Error de la petición",
+        status: 500,
+        data: err
+      };
+    }
+
+  }
+
   async create_place(new_place) { //Crear un lugar
+
+    let placeFound = await this.check_place_byname(new_place.name_place) //Verificar que no exista un lugar ya registrada
+
+    if (placeFound.status == 200) {
+      return {
+        message: "Ya existe un lugar con ese nombre",
+        status: 500,
+        data: new_place
+      };
+    }
 
     let decodedToken = decodificar(new_place.name)
 
