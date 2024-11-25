@@ -168,11 +168,8 @@ function App() {
                   </ul>
                 </div>
 
-                <button onClick={recharge_page} className='rutes'>Recargar</button>
-
                 <button className='rutes' onClick={saveRoutes}>Trazar ruta</button>
-
-
+                <button onClick={recharge_page} className='rutes'>Ver resultados</button>
 
               </div>
               <MapComponent
