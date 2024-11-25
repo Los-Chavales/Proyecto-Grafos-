@@ -37,9 +37,11 @@ export const HouseProvider = ({ children }) => {
             if (RESPONSE.status != 200) {
                 return console.log(RESPONSE.response.data);
             }
-
-            setHouse(RESPONSE.data)
-            setMensage(true)
+            document.querySelector('.form_input').value = '';
+            document.querySelector('.leaflet-popup-close-button').click();
+            setHouse(RESPONSE.data);
+            setMensage(true);
+            alert('Registro exitoso');
 
         } catch (error) {
             let menError = error.message;

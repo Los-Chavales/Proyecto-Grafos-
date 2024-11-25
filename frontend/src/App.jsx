@@ -34,72 +34,7 @@ function App() {
 
   const { places, houses, distanceData, getData, getWinningHouse } = useGET();
 
-  //const [distanceData, setDistanceData] = useState([])
-
-  //Para obtener los lugares de la DB
-  /*   const getData = async () => {
-      try {
-        const responseH = await fetch(import.meta.env.VITE_API_URL + '/houses', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        const responseP = await fetch(import.meta.env.VITE_API_URL + '/places', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        const infoH = await responseH.json();
-        const infoP = await responseP.json();
-        const getPlaces = infoP.data;
-        const getHouses = infoH.data;
-        console.debug(getHouses, getPlaces)
-        setPlaces(!Array.isArray(getPlaces) ? [] : getPlaces);
-        setHouses(!Array.isArray(getHouses) ? [] : getHouses);
-      } catch (error) {
-        console.error(error)
-      } */
-  /*try {
-    const responseS = await fetch(import.meta.env.VITE_API_URL + '/routes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body:
-        [
-          {
-            "id_house": "6b31a3da-50bf-47e1-acb7-da41d9e6c690"
-          },
-          {
-            "id_house": "f1ed5892-ec34-4f32-b264-6b7030e99283"
-          }
-        ]
-    })
-
-    const infoS = await responseS.json();
-    const getHouseS = infoS.data;
-    setDistanceData[getHouseS]
-  } catch (error) {
-    console.error(error)
-  }
-  */
-  /*  let datos = [
-     {
-       id_house: 'Edificio',
-       distance: 6,
-     },
-     {
-       id_house: 'Casa',
-       distance: 4.82,
-     },
-   ]
-   setDistanceData(datos)
- }
- useEffect(() => {
-   getData()
- }, []) */
+  
 
   useEffect(() => {
     getData()
@@ -113,8 +48,10 @@ function App() {
     setSelectedPlace(location);
   };*/
 
-  // Enviar los datos al backend
+  // Esto enviaba los datos al backend
+  // Ahora recarga los datos del mapa
   const recharge_page = async () => {
+    console.log('Datos actualizados')
     getData()
     getWinningHouse()
   };

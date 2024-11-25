@@ -17,30 +17,32 @@ export const PlaceProvider = ({ children }) => {
 
     useEffect(() => {
         if (errorsServer.length > 0) {
-          const timer = setTimeout(() => {
-            setErrorsServer([]);
-          }, 5000);
-          return () => clearTimeout(timer);
+            const timer = setTimeout(() => {
+                setErrorsServer([]);
+            }, 5000);
+            return () => clearTimeout(timer);
         }
-      }, [errorsServer]);
+    }, [errorsServer]);
 
     async function register_place(dataForm, token) {
 
         try {
             const RESPONSE = await API_SERVER_PLACES.post("/create_place", dataForm, {
                 headers: {
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json'
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-              }
+            }
             );
 
             if (RESPONSE.status != 200) {
                 return console.log(RESPONSE.response.data);
             }
-
-            setPlace(RESPONSE.data)
-            setMensage(true)
+            document.querySelector('.form_input').value = '';
+            document.querySelector('.leaflet-popup-close-button').click();
+            setPlace(RESPONSE.data);
+            setMensage(true);
+            alert('Registro exitoso');
 
         } catch (error) {
             let menError = error.message;
