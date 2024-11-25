@@ -37,7 +37,7 @@ const MapComponent = ({
   const [tempName, setTempName] = useState('');
 
   useEffect(() => {
-    if (selectedHouse && places.length > 0) {
+    if (selectedHouse && houses.length > 0 && places.length > 0) {
       // Calcula rutas automáticamente cuando una casa está seleccionada
       fetchAndDisplayRoutes([selectedHouse], places);
     }
