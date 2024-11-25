@@ -41,7 +41,7 @@ const MapComponent = ({
       // Calcula rutas automáticamente cuando una casa está seleccionada
       fetchAndDisplayRoutes([selectedHouse], places);
     }
-  }, [selectedHouse, places, fetchAndDisplayRoutes]);
+  }, [selectedHouse, places]);
 
   return (
     <div>
