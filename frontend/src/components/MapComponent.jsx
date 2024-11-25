@@ -106,7 +106,11 @@ const MapComponent = ({
         {/* Marcadores de casas */}
         {houses.map((house, idx) => (
           <Marker key={idx} position={[house.lat, house.lng]} icon={houseIcon}>
-            <Popup>{house.name}</Popup>
+            <Popup>
+              <div><strong>Casa:</strong> {house.name}</div>
+              <div><strong>Propietario:</strong> {house.user_name}</div>
+              <div><strong>Teléfono:</strong> {house.user_phone}</div>
+            </Popup>
           </Marker>
         ))}
 
