@@ -9,13 +9,27 @@ class Houses_Models {
     let houses_nodes;
 
     try {
-      houses_nodes = await session.run('MATCH (h:house) RETURN h', {});
+      //houses_nodes = await session.run('MATCH (h:house) RETURN h', {});
+      houses_nodes = await session.run('MATCH (u:user)-[o:owns]-(h:house) RETURN h, u', {});
       if(houses_nodes.records.length > 0){
 
         let houses = [];
 
         for (let i = 0; i < houses_nodes.records.length; i++) {
-          houses.push(houses_nodes.records[i].get(0).properties)
+          //houses.push(houses_nodes.records[i].get(0).properties)
+          houses.push({
+            rooms: houses_nodes.records[i]._fields[0].properties.rooms,
+            size: houses_nodes.records[i]._fields[0].properties.size,
+            price: houses_nodes.records[i]._fields[0].properties.price,
+            house_coords: houses_nodes.records[i]._fields[0].properties.house_coords,
+            property_type: houses_nodes.records[i]._fields[0].properties.property_type,
+            construction_materials: houses_nodes.records[i]._fields[0].properties.construction_materials,
+            name: houses_nodes.records[i]._fields[0].properties.name,
+            lat: houses_nodes.records[i]._fields[0].properties.lat,
+            lng: houses_nodes.records[i]._fields[0].properties.lng,
+            user_name: houses_nodes.records[i]._fields[1].properties.name,
+            user_phone: houses_nodes.records[i]._fields[1].properties.phone,
+          })
         }
 
         return {
